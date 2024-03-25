@@ -6,6 +6,8 @@ import { IoLogoWhatsapp } from "react-icons/io";
 import { FcTimeline } from "react-icons/fc";
 import { FaSitemap, FaCartFlatbed } from "react-icons/fa6";
 import { MdSpaceDashboard, MdAdminPanelSettings } from "react-icons/md";
+import Link from 'next/link';
+
 
 import {
   ArrowPathIcon,
@@ -33,7 +35,7 @@ export default function Navbar() {
 
   return (
     <header>
-      <nav className=" flex max-w-full items-center justify-between p-6 lg:px-8" aria-label="Global">
+      <nav className="relative flex max-w-full items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex">
           <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only">Kuai Sourcing</span>
@@ -52,35 +54,36 @@ export default function Navbar() {
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
         <a data-aos="fade-up" data-aos-duration="1200"
-            href=""
-            className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 cursor-pointer">
+            href="/"
+            className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 duration-150 cursor-pointer">
               <MdSpaceDashboard className="text-xl text-blue-400"/>
             <p>Dashboard</p>
           </a>
-          <a data-aos="fade-up" data-aos-duration="1200"
-            href=""
-            className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 cursor-pointer">
+          <Link href="/sourcing-requests"
+           data-aos="fade-up" data-aos-duration="1200"
+            className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 duration-150 cursor-pointer">
               <FaCartFlatbed className="text-xl text-blue-500"/>
             <p>Simple Sourcing Requests</p>
-          </a>
+          
+          </Link>
 
           <a data-aos="fade-up" data-aos-duration="1200"
-        href=""
-        className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 cursor-pointer">
+        href="/handling"
+        className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 duration-150 cursor-pointer">
             <FaSitemap className="text-xl text-blue-500"/>
             <p>Handling</p>
           </a>
 
           <a data-aos="fade-up" data-aos-duration="1200"
-        href=""
-        className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 cursor-pointer">
+        href="/sourcing-orders"
+        className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 duration-150 cursor-pointer">
             <FcTimeline className="text-xl"/>
            <p>Sourcing Orders</p> 
           </a>
 
           <a data-aos="fade-up" data-aos-duration="1200"
             href="https://wa.me/+447466068298?text=Hello%20there!"
-            className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 cursor-pointer"
+            className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 duration-150 cursor-pointer"
           >
             <IoLogoWhatsapp className="text-xl text-green-600" />
             <p>WhatsApp</p>
@@ -88,7 +91,7 @@ export default function Navbar() {
 
         </Popover.Group>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900 hover:scale-125 cursor-pointer">
+          <a href="#" className="text-sm font-semibold leading-6 text-gray-900 hover:scale-125 duration-150 cursor-pointer">
           <MdAdminPanelSettings className="text-xl" />
             Admin <span aria-hidden="true">&rarr;</span>
           </a>
