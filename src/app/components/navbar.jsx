@@ -56,22 +56,22 @@ export default function Navbar() {
         <a data-aos="fade-up" data-aos-duration="1200"
             href="/"
             className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 duration-150 cursor-pointer">
-              <MdSpaceDashboard className="text-xl text-blue-400"/>
+              <MdSpaceDashboard className="text-xl text-blue-500"/>
             <p>Dashboard</p>
           </a>
-          <Link href="/sourcing-requests"
-           data-aos="fade-up" data-aos-duration="1200"
+         
+          <a href="/sourcing-requests"
+          data-aos="fade-up" data-aos-duration="1200"
             className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 duration-150 cursor-pointer">
               <FaCartFlatbed className="text-xl text-blue-500"/>
-            <p>Simple Sourcing Requests</p>
-          
-          </Link>
-
+            <p>Sourcing Requests</p>
+          </a>
+         
           <a data-aos="fade-up" data-aos-duration="1200"
         href="/handling"
         className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 duration-150 cursor-pointer">
             <FaSitemap className="text-xl text-blue-500"/>
-            <p>Handling</p>
+            <p>Handling Requests</p>
           </a>
 
           <a data-aos="fade-up" data-aos-duration="1200"
@@ -83,8 +83,7 @@ export default function Navbar() {
 
           <a data-aos="fade-up" data-aos-duration="1200"
             href="https://wa.me/+447466068298?text=Hello%20there!"
-            className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 duration-150 cursor-pointer"
-          >
+            className="font-medium text-gray-900 flex justify-between-left space-x-2 hover:scale-125 duration-150 cursor-pointer">
             <IoLogoWhatsapp className="text-xl text-green-600" />
             <p>WhatsApp</p>
           </a>

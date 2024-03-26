@@ -1,13 +1,7 @@
 import React from "react";
-import { CheckIcon } from '@heroicons/react/20/solid'
+import { FlagIcon, CurrencyDollarIcon, Square3Stack3DIcon, CalendarDaysIcon } from '@heroicons/react/20/solid'
 import Navbar from "../components/navbar";
 
-const includedFeatures = [
-  'Private forum access',
-  'Member resources',
-  'Entry to annual conference',
-  'Official member t-shirt',
-]
 
 const data = [
   {
@@ -15,24 +9,26 @@ const data = [
     photo:
       "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
     country: "Maroc",
-    product: "Shakti Nirvana",
+    product: "Shampoo",
     reference:
       "BM3245",
-    price: "50 L",
-    quantity: "1,382 sq.ft.",
+    price: "800$",
+    quantity: "200",
     status: "Processing",
+    dateCreated: "2024-01-01T00:00:00",
   },
   {
     id: 2,
     photo:
-      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
+      "https://images.unsplash.com/photo-1683009426952-13567b4fa28b?q=80&w=1619&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
     country: "Niger",
-    product: "Shakti Nirvana",
+    product: "Shampoo",
     reference:
       "BM323345",
-    price: "50 L",
-    quantity: "1,382 sq.ft.",
+    price: "1000$",
+    quantity: "300",
     status: "Paid",
+    dateCreated: "2023-01-01T00:00:00",
 
   },
   {
@@ -40,12 +36,13 @@ const data = [
     photo:
       "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
     country: "Senegal",
-    product: "Shakti Nirvana",
+    product: "Shampoo",
     reference:
       "BM30245",
-    price: "50 L",
-    quantity: "1,382 sq.ft.",
+    price: "500$",
+    quantity: "1200",
     status: "Paid",
+    dateCreated: "2021-01-01T00:00:00",
 
   },
   {
@@ -53,11 +50,27 @@ const data = [
     photo:
       "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
     country: "Coté d'ivoire",
-    product: "Shakti Nirvana",
+    product: "Shampoo",
     reference:
       "BM3232445",
-    quantity: "1,382 sq.ft.",
-    status: "Paid",
+      price: "500$",
+    quantity: "1382",
+    status: "Unpaid",
+    dateCreated: "2023-01-01T00:00:00",
+
+  },
+  {
+    id: 5,
+    photo:
+      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
+    country: "Coté d'ivoire",
+    product: "Shampoo",
+    reference:
+      "BM323212445",
+      price: "5000$",
+    quantity: "1382",
+    status: "Pending confirmation",
+    dateCreated: "2023-01-01T00:00:00",
 
   },
 ];
@@ -65,121 +78,90 @@ const OrderCards = () => {
     return (
       <>
       <Navbar />
-     <div className="mx-auto mt-6 max-w-2xl rounded-3xl ring-1 ring-gray-200 shadow-lg sm:mt-20 lg:mx-12 lg:flex lg:max-w-none">
-          <div className="p-6 sm:p-10 lg:flex-auto">
-            <h3 className="text-2xl font-bold tracking-tight text-gray-900">Lifetime membership</h3>
-            <p className="mt-6 text-base leading-7 text-gray-600">
-              Lorem ipsum dolor sit amet consect etur adipisicing elit. Itaque amet indis perferendis blanditiis
-              repellendus etur quidem assumenda.
-            </p>
-            <div className="mt-10 flex items-center gap-x-4">
-              <h4 className="flex-none text-sm font-semibold leading-6 text-indigo-600">What’s included</h4>
-              <div className="h-px flex-auto bg-gray-100" />
-            </div>
-            <ul
-              role="list"
-              className="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-gray-600 sm:grid-cols-2 sm:gap-6"
-            >
-              {includedFeatures.map((feature) => (
-                <li key={feature} className="flex gap-x-3">
-                  <CheckIcon className="h-6 w-5 flex-none text-indigo-600" aria-hidden="true" />
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0">
-            <div className="rounded-2xl bg-gray-50 py-6 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-10">
-              <div className="mx-auto max-w-xs px-6">
-                <p className="text-base font-semibold text-gray-600">Pay once, own it forever</p>
-                <p className="mt-6 flex items-baseline justify-center gap-x-2">
-                  <span className="text-5xl font-bold tracking-tight text-gray-900">$349</span>
-                  <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">USD</span>
-                </p>
-                <a
-                  href="#"
-                  className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Get access
-                </a>
-                <p className="mt-6 text-xs leading-5 text-gray-600">
-                  Invoices and receipts available for easy company reimbursement
-                </p>
-              </div>
-            </div>
-          </div>
+      <div className="bg-transparent py-10 sm:py-14">
+      <div className="mx-auto sm:text-center max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl sm:text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your Sourcing Requests</h2>
+          <p className="mt-6 text-lg leading-8 text-gray-600">
+          After submitting your request, receive our confirmation within 24h then you can handle payments. Click Get Details to 
+          see more informations.
+          </p>
         </div>
-      
-      
-      
-      <div className="min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        {data.map((item) => (
-          <div
-            key={item.id}
-            className="w-auto flex flex-row space-x-4 px-4 py-6 mx-20 bg-white shadow-xl rounded-xl mb-6"
-          >
-            <div className="relative w-full md:w-48 h-48 md:h-auto ">
+
+        {data.map(item => (
+           <div key={item.id} className="mx-auto mt-16 max-w-2xl rounded-3xl shadow-lg bg-white ring-1 ring-gray-200 sm:mt-20 lg:mx-0 lg:flex items-center justify-center lg:max-w-none">
+           <div className="p-6 sm:p-8 lg:flex-auto">
+             <h3 className="text-2xl font-bold tracking-tight text-gray-900">Product name: {item.product}</h3>
+             <p className="mt-6 text-base leading-7 text-gray-600 flex justify-center items-center">
+               <b>Date created:&nbsp; &nbsp; </b> {item.dateCreated}
+             <CalendarDaysIcon className="h-6 w-5 ml-2 text-gray-500" />
+            </p>
+             <div className="mt-10 flex items-center gap-x-4">
+               <h4 className="flex-none text-sm font-semibold leading-6 text-blue-600">Informations</h4>
+               <div className="h-px flex-auto bg-gray-100" />
+             </div>
+             <ul
+               role="list"
+               className="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-gray-600 sm:grid-cols-2 sm:gap-6"
+             >
+             
+                   <li key={item} className="flex gap-x-3">
+                   <FlagIcon className="h-6 w-5 flex-none text-blue-600" aria-hidden="true" />
+                    <b>Country: </b> {item.country}
+                 </li>     
+                 <li key={item} className="flex gap-x-3">
+                   <Square3Stack3DIcon className="h-6 w-5 flex-none text-blue-600" aria-hidden="true" />
+                    <b>Quantity: </b> {item.quantity}
+                 </li>  
+                 <li key={item} className="flex gap-x-3">
+                   <CurrencyDollarIcon className="h-6 w-5 flex-none text-blue-600" aria-hidden="true" />
+                    <b>Price: </b> {item.price}
+                 </li>             
+         
+             </ul>
+           </div>
+ 
+           <div className="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0">
+             <div className="rounded-2xl bg-gray-50 py-4 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-4">
+               <div className="mx-auto max-w-xs px-4">
+                 <p className="text-gray-600 text-base font-semibold mb-4 mt-2 md:mt-3">Reference: {item.reference}</p>
+                    <div className="relative w-full md:w-48 h-48 md:h-auto ">
               <img
                 src={item.photo}
                 alt=""
                 className=" object-cover rounded-lg transition-opacity duration-300"
               />
-            </div>
-            <div className="flex-grow">
-              <div
-                className={`px-2 py-1 rounded-full text-center text-white font-semibold text-xs md:text-sm ${
+                    </div>
+               
+                 <a
+                   href="#"
+                   className="mt-10 block w-full rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                 >
+                   Get Details
+                 </a>
+                 <div
+                className={`px-2 py-1 mt-4 rounded-full text-center text-white font-semibold text-xs md:text-sm ${
                   item.status === "Paid"
-                    ? "bg-green-200"
+                    ? "bg-green-400"
                     : item.status === "Processing"
-                    ? "bg-blue-200"
-                    : "bg-red-200"
+                    ? "bg-blue-400"
+                    : item.status === "Unpaid"
+                    ? "bg-red-400"
+                    : "bg-blue-300"
                 }`}
               >
                 {item.status}
               </div>
-              <h2 className="text-xl font-bold text-gray-900 mt-2 md:mt-3">
-                {item.product}
-              </h2>
-              <p className="text-gray-600 mt-2 md:mt-3">{item.reference}</p>
-              <table className="mt-4 w-full md:w-full"> {/* Apply w-full on larger screens */}
-              <tbody>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> {/* Use grid on mobile */}
-                 <tr className="border-b">
-                <td className="text-gray-700 font-semibold text-sm md:text-base py-2">
-                     country:
-                 </td>
-                 <td className="text-gray-700 font-semibold text-sm md:text-base py-2">
-                   {item.country}
-                 </td>
-                </tr>
-             <tr className="border-b">
-              <td className="text-gray-700 font-semibold text-sm md:text-base py-2">
-                   Price:
-               </td>
-               <td className="text-gray-700 font-semibold text-sm md:text-base py-2">
-                   {`₹ ${item.price}`}
-                  </td>
-                 </tr>
-                  <tr className="border-b">
-                    <td className="text-gray-700 font-semibold text-sm md:text-base py-2">
-                      quantity:
-                    </td>
-                    <td className="text-gray-700 font-semibold text-sm md:text-base py-2">
-                      {item.quantity}
-                    </td>
-                  </tr>
-                  </div>
-                </tbody>
-              </table>
-            </div>
-            <div className="mt-4">
-              <button className="px-3 py-2 bg-blue-400 hover:bg-blue-600 text-white rounded-xl font-semibold text-lg">
-                Details
-              </button>
-            </div>
-          </div>
+               </div>
+             </div>
+           </div>
+           </div>
+       
         ))}
-      </div>
+
+       </div>
+     </div>
+
       </>
     );
   };

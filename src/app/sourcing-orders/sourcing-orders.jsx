@@ -1,6 +1,7 @@
 "use client"
 
 import { FaEllipsisV } from 'react-icons/fa'; 
+import { TruckIcon, CheckBadgeIcon, ClipboardDocumentListIcon, BanknotesIcon } from '@heroicons/react/20/solid';
 import { useState } from 'react'; 
 
 const products = [
@@ -12,8 +13,9 @@ const products = [
       quantity: 200,
       dateCreated: '2023-01-23T13:23Z',
       imageUrl:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       status: 'Paid',
+      icon: <BanknotesIcon className='h-8 w-10 text-blue-500 justify-center'/>,
     },
     {
       name: 'Michael Foster',
@@ -23,8 +25,9 @@ const products = [
       quantity: 200,
       dateCreated: '2023-01-23T13:23Z',
       imageUrl:
-        'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        status: 'Processing',
+        'https://images.unsplash.com/photo-1617350142147-7403b8fb9889?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        status: 'Shipped',
+        icon: <TruckIcon className='h-8 w-10 text-blue-600 justify-center'/>,
     },
     {
       name: 'Dries Vincent',
@@ -34,8 +37,10 @@ const products = [
       quantity: 100,
       dateCreated: '2023-01-23T13:23Z',
       imageUrl:
-        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        status: 'Processing',
+        'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        status: 'Shipped',
+        icon: <TruckIcon className='h-8 w-10 text-blue-600 justify-center'/>,
+
     },
     {
       name: 'Lindsay Walton',
@@ -45,8 +50,10 @@ const products = [
       quantity: 500,
       dateCreated: '2023-01-23T13:23Z',
       imageUrl:
-        'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        status: 'Processing',
+        'https://images.unsplash.com/photo-1505740106531-4243f3831c78?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        status: 'Arrived',
+        icon: <CheckBadgeIcon className='h-8 w-10 text-green-400 justify-center'/>,
+
     },
     {
       name: 'Courtney Henry',
@@ -56,8 +63,10 @@ const products = [
       quantity: 1200,
       dateCreated: '2023-01-23T13:23Z',
       imageUrl:
-        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        'https://images.unsplash.com/photo-1630080644615-0b157f1574ec?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         status: 'Paid',
+        icon: <BanknotesIcon className='h-8 w-10 text-blue-500 justify-center'/>,
+
     },
     {
       name: 'Tom Cook',
@@ -67,8 +76,10 @@ const products = [
       quantity: 300,
       dateCreated: '2023-01-23T13:23Z',
       imageUrl:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        status: 'paid',
+        'https://images.unsplash.com/photo-1617350142147-7403b8fb9889?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        status: 'Shipped',
+        icon: <TruckIcon className='h-8 w-10 text-blue-600 justify-center'/>,
+
     },
     {
         name: 'Dries Vincent',
@@ -78,8 +89,10 @@ const products = [
         quantity: 100,
         dateCreated: '2023-01-23T13:23Z',
         imageUrl:
-          'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+          'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
           status: 'Processing',
+          icon: <ClipboardDocumentListIcon className='h-8 w-10 text-blue-400 justify-center'/>,
+
       },
       {
         name: 'Lindsay Walton',
@@ -89,8 +102,10 @@ const products = [
         quantity: 500,
         dateCreated: '2023-01-23T13:23Z',
         imageUrl:
-          'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+          'https://images.unsplash.com/photo-1560343090-f0409e92791a?q=80&w=1528&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
           status: 'Processing',
+          icon: <ClipboardDocumentListIcon className='h-8 w-10 text-blue-400 justify-center'/>,
+
       },
       {
         name: 'Courtney Henry',
@@ -100,8 +115,10 @@ const products = [
         quantity: 1200,
         dateCreated: '2023-01-23T13:23Z',
         imageUrl:
-          'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+          'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
           status: 'Paid',
+          icon: <BanknotesIcon className='h-8 w-10 text-blue-500 justify-center'/>,
+
       },
   ]
   
@@ -159,7 +176,7 @@ const products = [
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{product.status}</div>
+                  <div className="text-sm text-gray-900">{product.status}{product.icon}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{product.quantity}</div>
