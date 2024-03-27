@@ -190,9 +190,9 @@ export default function SourcingRequestForm() {
     <div className="border-b border-gray-900/10 pb-8"></div>
 
 
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Destination Country</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">Use a permanent address where you can receive mail.</p>
+        <div className="border-b border-gray-900/10 pb-12 ">
+          <h2 className="text-base font-semibold leading-7 text-gray-900 after:content-['*'] after:ml-0.5 after:text-red-500">Destination Country</h2>
+          <p className="mt-1 text-sm leading-6 text-gray-600">Use an address where you can receive mail.</p>
 
             <Destinations />
 
@@ -248,9 +248,12 @@ export default function SourcingRequestForm() {
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
+        <a href='/'>
         <button type="button" className="text-sm font-semibold leading-6 text-gray-900 rounded-md ">
           Cancel
         </button>
+        </a>
+       
         <button
           type="submit"
           className="rounded-md bg-blue-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"

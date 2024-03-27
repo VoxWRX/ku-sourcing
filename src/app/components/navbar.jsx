@@ -1,14 +1,11 @@
 "use client"
 
 import { Fragment, useState } from 'react'
-import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
+import { Dialog, Disclosure, Menu, Popover, Transition } from '@headlessui/react'
 import { IoLogoWhatsapp } from "react-icons/io";
 import { FcTimeline } from "react-icons/fc";
 import { FaSitemap, FaCartFlatbed } from "react-icons/fa6";
 import { MdSpaceDashboard, MdAdminPanelSettings } from "react-icons/md";
-import Link from 'next/link';
-
-
 import {
   ArrowPathIcon,
   Bars3Icon,
@@ -20,6 +17,18 @@ import {
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 
+
+const user = {
+  name: 'Saif Billali',
+  email: 'saif@example.com',
+  imageUrl:
+    'https://images.unsplash.com/photo-1503354531728-dedfa6cb4e8d?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+}
+const userNavigation = [
+  { name: 'Your Profile', href: '#' },
+  { name: 'Settings', href: '#' },
+  { name: 'Sign out', href: '#' },
+]
 
 const callsToAction = [
   { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
@@ -90,6 +99,43 @@ export default function Navbar() {
 
         </Popover.Group>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+           {/* Profile dropdown */}
+           <Menu as="div" className="relative mr-4 ml-3">
+                        <div>
+                          <Menu.Button className="relative flex hover:scale-125 duration-150 cursor-pointer max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                            <span className="absolute -inset-1.5" />
+                            <span className="sr-only">Open user menu</span>
+                            <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
+                          </Menu.Button>
+                        </div>
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            {userNavigation.map((item) => (
+                              <Menu.Item key={item.name}>
+                                {({ active }) => (
+                                  <a
+                                    href={item.href}
+                                    className={classNames(
+                                      active ? 'bg-gray-100' : '',
+                                      'block px-4 py-2 text-sm text-gray-700'
+                                    )}
+                                  >
+                                    {item.name}
+                                  </a>
+                                )}
+                              </Menu.Item>
+                            ))}
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900 hover:scale-125 duration-150 cursor-pointer">
           <MdAdminPanelSettings className="text-xl" />
             Admin <span aria-hidden="true">&rarr;</span>
@@ -102,7 +148,7 @@ export default function Navbar() {
 
 
       <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
-        <div className="fixed inset-0 z-10" />
+        <div className="fixed inset-0 z-30" />
         
         <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10" >
           <div className="flex items-center justify-between">
@@ -126,7 +172,7 @@ export default function Navbar() {
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
               <a
-                  href="#"
+                  href="/"
                   className="-mx-3 flex justify-between-left space-x-2  rounded-lg px-3 py-2 text-base font-semibold  text-gray-900 hover:bg-gray-50"
                 >
                     <MdSpaceDashboard className="text-2xl text-blue-400 my-2"/>
@@ -134,23 +180,23 @@ export default function Navbar() {
                 </a>
                 
                 <a
-                  href="#"
+                  href="/sourcing-requests"
                   className="-mx-3 flex justify-between-left space-x-2  rounded-lg px-3 py-2 text-base font-semibold  text-gray-900 hover:bg-gray-50"
                 >
                     <FaCartFlatbed className="text-2xl text-blue-400 my-2"/>
-                  <p className='my-2'>Simple Sourcing Requests</p>
+                  <p className='my-2'>Sourcing Requests</p>
                 </a>
 
                 <a
-                  href="#"
+                  href="/handling"
                   className="-mx-3 flex justify-between-left space-x-2  rounded-lg px-3 py-2 text-base font-semibold  text-gray-900 hover:bg-gray-50"
                 >
                     <FaSitemap className="text-2xl text-blue-400 my-2"/>
-                  <p className='my-2'>Handling</p>
+                  <p className='my-2'>Handling Requests</p>
                 </a>
 
                 <a
-                  href="#"
+                  href="/sourcing-orders"
                   className="-mx-3 flex justify-between-left space-x-2  rounded-lg px-3 py-2 text-base font-semibold  text-gray-900 hover:bg-gray-50"
                 >
                     <FcTimeline className="text-2xl text-blue-400 my-2"/>
@@ -168,7 +214,20 @@ export default function Navbar() {
           </a>
               </div>
             
-              <div className="py-6">
+            <Disclosure>
+            <div className="py-6">
+              <div className="mt-3 space-y-1 px-2">
+                    {userNavigation.map((item) => (
+                      <Disclosure.Button
+                        key={item.name}
+                        as="a"
+                        href={item.href}
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                      >
+                        {item.name}
+                      </Disclosure.Button>
+                    ))}
+                  </div>
               <a
                   href="#"
                   className="-mx-3 flex justify-between-left space-x-2  rounded-lg px-3 py-2 text-base font-semibold  text-gray-900 hover:bg-gray-50"
@@ -177,6 +236,8 @@ export default function Navbar() {
                   <p className='my-2'>Admin</p>
                 </a>
               </div>
+            </Disclosure>
+              
             </div>
           </div>
         </Dialog.Panel>

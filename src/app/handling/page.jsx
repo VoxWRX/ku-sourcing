@@ -1,6 +1,7 @@
 import React from "react";
 import { FlagIcon, CurrencyDollarIcon, Square3Stack3DIcon, CalendarDaysIcon } from '@heroicons/react/20/solid'
 import Navbar from "../components/navbar";
+import Details from "../components/request-details";
 
 
 const data = [
@@ -79,7 +80,7 @@ const OrderCards = () => {
       <>
       <Navbar />
       <div className="bg-transparent py-10 sm:py-14">
-      <div className="mx-auto sm:text-center max-w-7xl px-6 lg:px-8">
+      <div className="mx-auto sm:text-center max-w-6xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl sm:text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your Sourcing Requests</h2>
           <p className="mt-6 text-lg leading-8 text-gray-600">
@@ -89,7 +90,7 @@ const OrderCards = () => {
         </div>
 
         {data.map(item => (
-           <div key={item.id} className="mx-auto mt-16 max-w-2xl rounded-3xl shadow-lg bg-white ring-1 ring-gray-200 sm:mt-20 lg:mx-0 lg:flex items-center justify-center lg:max-w-none">
+           <div key={item.id} className="mx-auto mt-14 max-w-2xl rounded-3xl shadow-lg bg-white ring-1 ring-gray-200 sm:mt-16 lg:mx-0 lg:flex items-center justify-center lg:max-w-none">
            <div className="p-6 sm:p-8 lg:flex-auto">
              <h3 className="text-2xl font-bold tracking-tight text-gray-900">Product name: {item.product}</h3>
              <p className="mt-6 text-base leading-7 text-gray-600 flex justify-center items-center">
@@ -125,20 +126,17 @@ const OrderCards = () => {
              <div className="rounded-2xl bg-gray-50 py-4 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-4">
                <div className="mx-auto max-w-xs px-4">
                  <p className="text-gray-600 text-base font-semibold mb-4 mt-2 md:mt-3">Reference: {item.reference}</p>
-                    <div className="relative w-full md:w-48 h-48 md:h-auto ">
-              <img
-                src={item.photo}
-                alt=""
-                className=" object-cover rounded-lg transition-opacity duration-300"
+                 <div className="md:w-48 h-48 md:h-auto">
+               <img
+                  src={item.photo}
+                  alt=""
+                  className="object-cover rounded-lg transition-opacity duration-300 w-full h-full"
+                  style={{width: '100%', height: '100%'}}
               />
-                    </div>
+                </div>
                
-                 <a
-                   href="#"
-                   className="mt-10 block w-full rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                 >
-                   Get Details
-                 </a>
+                 <Details products={item.id}/>
+
                  <div
                 className={`px-2 py-1 mt-4 rounded-full text-center text-white font-semibold text-xs md:text-sm ${
                   item.status === "Paid"

@@ -4,7 +4,7 @@ import { SparklesCore } from "./sparkles";
 export function SparklesBlack() {
   return (
     <div className="h-[20rem] w-full bg-transparent mt-4 flex flex-col items-center justify-center overflow-hidden rounded-md">
-<h1 className="md:text-6xl text-5xl lg:text-7xl font-bold text-center text-black relative z-20" style={{ background: '-webkit-linear-gradient(left, #60a5fa, #2563eb, #60a5fa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+<h1 className="md:text-6xl text-5xl lg:text-7xl font-bold text-center text-black relative z-10" style={{ background: '-webkit-linear-gradient(left, #60a5fa, #2563eb, #60a5fa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
         Kuai Sourcing
       </h1>
       <div className="w-[40rem] h-40 relative">
