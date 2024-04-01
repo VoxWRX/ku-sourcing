@@ -1,8 +1,11 @@
-import React from 'react'
-import Navbar from '../components/navbar'
-import SourcingOrders from './sourcing-orders'
+"use client"
 
-export default function Handling () {
+import React from 'react'
+import SourcingOrders from './sourcing-orders'
+import withAuth from '../context/withAuth'
+import Navbar from '../components/navbar'
+
+function Handling () {
   return (
     <div className='relative'>
 
@@ -20,3 +23,5 @@ export default function Handling () {
     </div>
   )
 }
+
+export default withAuth(Handling);

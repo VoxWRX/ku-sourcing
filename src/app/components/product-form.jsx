@@ -1,10 +1,15 @@
 "use client"
 
 import { PhotoIcon, CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid'
-import { Fragment, useState } from 'react'
+import { Fragment, useContext, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import Destinations from './destinations'
 import { TypewriterEffectSourcing } from './writer-source'
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { db } from '../config/firebase'
+import { AuthContext } from '../context/authContext'
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import FormSubmit from './alerts/form-submit'
 
 
 const category = [
@@ -48,10 +53,99 @@ function classNames(...classes) {
   }
 
 export default function SourcingRequestForm() {
-    const [selectedCategory, setSelectedCategory] = useState(category[3])
+    const [selectedCategory, setSelectedCategory] = useState(category[3]);
+    const [file, setFile] = useState(null);
+    const [imageUrl, setImageUrl] = useState(null);
+    const [formSuccessNotif, setFormSuccessNotif] = useState('');
+
+    const [formData, setFormData] = useState({
+      productName: '',
+      productImage: null, 
+      productURL: '',
+      category: selectedCategory.name,
+      additionalNotes: '',
+      airFreight: false, 
+      status: 'Processing',
+      formCreationDate: new Date(),
+      // other fields here as needed
+    });
+
+    const [destinations, setDestinations] = useState([]);
+
+     const handleUpdateDestinations = (newDestinations) => {
+        setDestinations(newDestinations);
+      };
+
+    const { currentUser } = useContext(AuthContext); 
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target; 
+    setFormData({ ...formData, [name]: checked });
+  };
+  
+    const handleFileChange = (e) => {
+      const selectedFile = e.target.files[0];
+      if (selectedFile) {
+        setFile(selectedFile);
+        const fileUrl = URL.createObjectURL(selectedFile);
+        setImageUrl(fileUrl); // The file URL for preview
+      }
+    };
+  const uploadFile = async (file) => {
+    const storage = getStorage();
+    const storageRef = ref(storage, `product-images/${file.name}-${Date.now()}`);
+  
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!currentUser) {
+      alert('You must be logged in to submit a request.');
+      return;
+    }
+
+    // Add additional validation as needed
+    let fileUrl = '';
+    if (file) {
+      fileUrl = await uploadFile(file); // Upload the file and get the URL
+    }
+
+    try {
+      console.log('Destinations before submission:', destinations);
+
+      // Save the form data to Firestore
+      await addDoc(collection(db, 'product_request_forms'), {
+        ...formData,
+        userId: currentUser.uid, // here the request with the current user id
+        formCreationDate: Timestamp.fromDate(formData.formCreationDate), // Convert to Timestamp here for firebase format
+        productImageUrl: fileUrl, // the URL of the uploaded file
+        destinations: destinations, 
+      });
+
+      setFormSuccessNotif('Sourcing request submitted successfully!');
+      setTimeout(() => {
+        setNotification('');
+      }, 5000); // 5 seconds delay
+
+      window.location.href = '/user-handling'
+    } catch (error) {
+      console.error('Error submitting the sourcing request: ', error);
+      alert('Failed to submit the sourcing request.');
+    }
+  };
+
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="space-y-12">
                   <TypewriterEffectSourcing />
           <p className="text-sm leading-6 text-gray-600">
@@ -68,11 +162,12 @@ export default function SourcingRequestForm() {
                   <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm ">kuaisourcing.com/</span>
                   <input
                     type="text"
-                    name="product"
+                    name="productName"
                     id="product"
                     autoComplete="product"
                     className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                     placeholder="name here..."
+                    onChange={handleInputChange}
                   />
                 </div>
               </div>
@@ -85,7 +180,10 @@ export default function SourcingRequestForm() {
                 Product Image
               </label>
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                <div className="text-center">
+              
+               {
+                !imageUrl && (
+                  <div className="text-center">
                   <PhotoIcon className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
                   <div className="mt-4 flex text-sm leading-6 text-gray-600">
                     <label
@@ -93,12 +191,19 @@ export default function SourcingRequestForm() {
                       className="relative cursor-pointer rounded-md p-1 bg-white font-semibold text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-400 focus-within:ring-offset-2 hover:text-blue-500"
                     >
                       <span>Upload a file</span>
-                      <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                      <input onChange={handleFileChange} id="file-upload" name="productImage" type="file" className="sr-only" />
                     </label>
                     <p className="pl-1">or drag and drop</p>
                   </div>
                   <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 5MB</p>
                 </div>
+                )
+               }      
+                {imageUrl && (
+              <div className="mt-4 flex justify-center">
+            <img src={imageUrl} alt="Preview" className="max-w-xs max-h-64" />
+               </div>
+                  )}
               </div>
             </div>
 
@@ -109,15 +214,20 @@ export default function SourcingRequestForm() {
               <div className="mt-2">
                 <input
                   id="urlField"
-                  name="urlField"
+                  name="productURL"
                   type="url"
                   autoComplete="urlField"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
+                  onChange={handleInputChange}
                 />
               </div>
 
 
-              <Listbox value={selectedCategory} onChange={setSelectedCategory}>
+              <Listbox value={selectedCategory} onChange={(newCategory) => {
+              setSelectedCategory(newCategory);
+              setFormData({ ...formData, category: newCategory.name });
+            }}>
+
       {({ open }) => (
         <>
           <Listbox.Label className="block mt-5 text-sm font-medium leading-6 text-gray-900 after:content-['*'] after:ml-0.5 after:text-red-500">Category</Listbox.Label>
@@ -194,23 +304,22 @@ export default function SourcingRequestForm() {
           <h2 className="text-base font-semibold leading-7 text-gray-900 after:content-['*'] after:ml-0.5 after:text-red-500">Destination Country</h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">Use an address where you can receive mail.</p>
 
-            <Destinations />
-
-          
+          <Destinations onUpdateDestinations={handleUpdateDestinations} />
           
         </div>
 
         <div className="col-span-full">
-              <label htmlFor="about" className="block text-sm font-medium leading-6 text-gray-900">
+              <label htmlFor="additionalNotes" className="block text-sm font-medium leading-6 text-gray-900">
                 Additional Notes
               </label>
               <div className="mt-2">
                 <textarea
-                  id="about"
-                  name="about"
+                  id="additionalNotes"
+                  name="additionalNotes"
                   rows={3}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                   defaultValue={''}
+                  onChange={handleInputChange}
                 />
               </div>
               <p className="mt-3 text-sm leading-6 text-gray-600">Extra details for specific orders.</p>
@@ -227,9 +336,11 @@ export default function SourcingRequestForm() {
                   <div className="flex h-6 items-center">
                     <input
                       id="air"
-                      name="air"
+                      name="airFreight"
                       type="checkbox"
                       className="h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+                      onChange={handleCheckboxChange} 
+                      checked={formData.airFreight}
                     />
                   </div>
                   <div className="text-sm leading-6">
@@ -246,9 +357,10 @@ export default function SourcingRequestForm() {
           </div>
         </div>
       </div>
+      <FormSubmit message={formSuccessNotif} onClose={() => setFormSuccessNotif('')} />
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        <a href='/'>
+        <a href='/user-dashboard'>
         <button type="button" className="text-sm font-semibold leading-6 text-gray-900 rounded-md ">
           Cancel
         </button>

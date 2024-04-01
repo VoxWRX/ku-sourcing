@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-const Destinations = () => {
+const Destinations = ({onUpdateDestinations}) => {
   const [showText, setShowText] = useState(false);
   const [destinations, setDestinations] = useState([]);
   const [formData, setFormData] = useState({
@@ -24,16 +24,20 @@ const Destinations = () => {
   };
 
   const handleAddDestination = () => {
-    setDestinations([...destinations, formData]);
-    setFormData({ service: '', country: '', quantity: '' });
-  };
+    const newDestinations = [...destinations, formData];
+     setDestinations(newDestinations);
+     setFormData({ service: '', country: '', quantity: '' }); // Reset the form
+     onUpdateDestinations(newDestinations); // Update parent component's state
+    };
 
   const handleDeleteDestination = (index) => {
-    const newDestinations = [...destinations];
-    newDestinations.splice(index, 1);
+    const newDestinations = destinations.filter((_, i) => i !== index);
     setDestinations(newDestinations);
-  };
+    onUpdateDestinations(newDestinations); // Update parent component's state
+    };
 
+
+    
   return (
     <div className="container mx-auto max-w-xl ml-2 mt-8">
       <form>

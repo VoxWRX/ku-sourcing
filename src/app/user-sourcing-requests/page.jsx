@@ -1,10 +1,10 @@
-  
+  "use client"
   import Navbar from "../components/navbar";
-  import Image from "next/image";
   import { TracingBeamMain } from "../components/tracing-main";
+import withAuth from "../context/withAuth";
   
   
-  export default function SourcingReq(){
+  function SourcingReq(){
       return(
           <>
                <Navbar />
@@ -30,3 +30,5 @@
          
       )
   }
+
+  export default withAuth(SourcingReq);

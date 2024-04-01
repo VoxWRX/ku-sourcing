@@ -1,9 +1,12 @@
+"use client"
+
 import { LinkIcon } from '@heroicons/react/20/solid'
 import { SiWise } from "react-icons/si";
 import { BsBank } from "react-icons/bs";
 import Navbar from '../components/navbar'
+import withAuth from '../context/withAuth';
 
-export default function Payments() {
+function Payments() {
   return (
     <>
     <Navbar />
@@ -62,3 +65,5 @@ export default function Payments() {
     
   )
 }
+
+export default withAuth(Payments);
