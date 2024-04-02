@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useContext, useEffect, useState } from "react";
-import { FlagIcon, CurrencyDollarIcon, Square3Stack3DIcon, CalendarDaysIcon } from '@heroicons/react/20/solid'
+import { FlagIcon, CurrencyDollarIcon, Square3Stack3DIcon, CalendarDaysIcon, GlobeAltIcon } from '@heroicons/react/20/solid'
 import Navbar from "../components/navbar";
 import Details from "../components/request-details";
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -24,7 +24,14 @@ const OrderCards = () => {
 
         try {
           const querySnapshot = await getDocs(q);
-          const requests = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const requests = querySnapshot.docs.map(doc => {
+            // Extract the data from the document
+            const data = doc.data();
+            // Determine the shipping type based on the airFreight value
+            const shippingType = data.airFreight ? 'Express Shipping' : 'Normal Shipping';
+            // Return the new object with all the data and the added shippingType
+            return { id: doc.id, ...data, shippingType };
+          });
           setSourcingRequestsList(requests);
         } catch (err) {
           console.error(err);
@@ -55,10 +62,14 @@ const OrderCards = () => {
             sourcingRequestsList.map(item => (
               <div key={item.id} className="mx-auto mt-14 max-w-2xl rounded-3xl shadow-lg bg-white ring-1 ring-gray-200 sm:mt-16 lg:mx-0 lg:flex items-center justify-center lg:max-w-none">
                 <div className="p-6 sm:p-8 lg:flex-auto">
-                  <h3 className="text-2xl font-bold tracking-tight text-gray-900">Product name: {item.productName}</h3>
-                  <p className="mt-6 text-base leading-7 text-gray-600 flex justify-center items-center">
+                  <h3 className="text-2xl font-semibold tracking-tight text-gray-900"><b>Product name: </b> {item.productName}</h3>
+                  <p className="mt-4 text-base leading-7 text-gray-600 flex justify-center items-center">
                     <b>Date created:&nbsp; &nbsp; </b> {item.formCreationDate.toDate().toLocaleDateString()}
                     <CalendarDaysIcon className="h-6 w-5 ml-2 text-gray-500" />
+                  </p>
+                  <p className="mt-4 text-base leading-7 text-gray-600 flex justify-center items-center">
+                    <p className="text-sm font-semibold text-gray-600"><b>Shipment: </b> {item.shippingType}</p>
+                    <GlobeAltIcon className="h-6 w-5 ml-2 text-gray-500" />
                   </p>
                   <div className="mt-10 flex items-center gap-x-4">
                     <h4 className="flex-none text-sm font-semibold leading-6 text-blue-600">Informations</h4>
@@ -112,7 +123,7 @@ const OrderCards = () => {
                           className="object-cover rounded-lg transition-opacity duration-300 w-full h-full"
                         />
                       </div>
-                      <Details sourcingRequestsList={item.id} />
+                      <Details status={item.status} orderId={item.id} />
 
                     </div>
                   </div>
