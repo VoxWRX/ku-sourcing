@@ -5,6 +5,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "../config/firebase";
 
 const QuotationFormModal = ({ order, destinationIndex, onClose, onSave }) => {
+
     const [quotationData, setQuotationData] = useState({
         unitPrice: '',
         commissionOfService: '',
@@ -32,6 +33,7 @@ const QuotationFormModal = ({ order, destinationIndex, onClose, onSave }) => {
             country: destinationCountry,
         });
 
+
         // Marking the quotation as filled for the corresponding destination
         const updatedOrder = {
             ...order,
@@ -51,6 +53,7 @@ const QuotationFormModal = ({ order, destinationIndex, onClose, onSave }) => {
     };
 
     return (
+
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full space-y-4">
                 <h2 className="text-xl font-semibold">Quotation for {order.productName}</h2>
