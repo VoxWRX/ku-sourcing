@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useContext, useEffect } from "react";
-import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged } from "firebase/auth";
-import { auth, googleProvider } from '../config/firebase';
+import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, getAuth } from "firebase/auth";
+import { auth, db, googleProvider } from '../config/firebase';
 import { AuthContext } from "../context/authContext";
+import { getDoc, setDoc, doc } from "firebase/firestore";
 
 
 const Login = () => {
@@ -11,10 +12,10 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const {dispatch} = useContext(AuthContext)
+  const { dispatch } = useContext(AuthContext)
 
-
-  useEffect(() => {
+  {/* 
+ useEffect(() => {
     // Check if user is already authenticated
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -26,6 +27,9 @@ const Login = () => {
     return () => unsubscribe();
   }, []);
 
+*/}
+
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -36,21 +40,40 @@ const Login = () => {
       const user = userCredential.user;
       dispatch({ type: "LOGIN", payload: user });
       window.location.href = '/user-dashboard';
-    } 
+    }
     catch (error) {
       setError(error.message);
     }
   };
-  
 
-  const signInWithGoogle = async () => {
+
+  const loginWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
-      window.location.href = '/user-dashboard';
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      const user = userCredential.user;
+      console.log('User signed in with Google:', user);
+
+      const userRef = doc(db, 'users', user.uid);
+
+      // Checking if the user exists in Firestore
+      const docSnap = await getDoc(userRef);
+
+      if (!docSnap.exists()) {
+        setTimeout(() => {
+          window.location.href = '/sign-up';
+        }, 2000); // Delay redirect by 2 second      
+      } else {
+        console.log('User document exists, proceeding to dashboard.');
+        dispatch({ type: "LOGIN", payload: user });
+        window.location.href = '/user-dashboard';
+      }
     } catch (error) {
+      console.error('Error signing in with Google or creating the user document:', error);
       setError(error.message);
     }
   };
+
+
 
 
   return (
@@ -119,13 +142,13 @@ const Login = () => {
               </button>
             </div>
             <div>
-              <button  
-                type="submit"
+              <button
+                type="button"
                 className="flex w-full justify-center rounded-md bg-blue-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-                onClick={signInWithGoogle}
-                >
-                  Sign in with Google Account
-                </button>
+                onClick={loginWithGoogle}
+              >
+                Sign in with Google Account
+              </button>
             </div>
             <div>
 

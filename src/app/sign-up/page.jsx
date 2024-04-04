@@ -2,75 +2,93 @@
 
 import { useContext, useState } from 'react';
 import { auth, db, googleProvider } from '../config/firebase';
-import Link from 'next/link';
 import { AuthContext } from '../context/authContext';
-import { createUserWithEmailAndPassword } from '@firebase/auth';
-import { setDoc, doc } from '@firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithPopup } from '@firebase/auth';
+import { setDoc, doc, getDoc } from '@firebase/firestore';
 
 
 const SignUp = () => {
-   const [firstName, setFirstName] = useState('');
-   const [familyName, setFamilyName] = useState('');
-   const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [familyName, setFamilyName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
-    const {dispatch} = useContext(AuthContext)
-  
 
-    const handleSignUp = async (e) => {
-      e.preventDefault();
+  const { dispatch } = useContext(AuthContext)
 
-      if (password !== confirmPassword) {
-        setError("Passwords do not match.");
-        return;
-      }
-    
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        // Signed up
-       
-        const user = userCredential.user;
-        dispatch({ type: "SIGNUP", payload: user });
-        await setDoc(doc(db, 'users', user.uid),{ 
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      // Signed up
+
+      const user = userCredential.user;
+      dispatch({ type: "SIGNUP", payload: user });
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        firstName: firstName,
+        familyName: familyName,
+        role: 'basic',
+        profilePicture: null,
+
+        // Add other user data as needed
+      });
+
+      // change this navigation to the email verification page
+      window.location.href = '/user-dashboard';
+    }
+    catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const loginWithGoogle = async () => {
+    try {
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      const user = userCredential.user;
+      console.log('User signed in with Google:', user);
+
+      const userRef = doc(db, 'users', user.uid);
+
+      // Checking if the user exists in Firestore
+      const docSnap = await getDoc(userRef);
+
+      if (!docSnap.exists()) {
+        console.log('User does not exist, creating new document');
+        await setDoc(userRef, {
           email: user.email,
-          firstName: firstName,
-          familyName: familyName,
+          firstName: user.displayName ? user.displayName.split(' ')[0] : '',
+          familyName: user.displayName && user.displayName.split(' ').length > 1 ? user.displayName.split(' ')[1] : '',
           role: 'basic',
-          // Add other user data as needed
+          profilePicture: null,
+
         });
-      
-        // change this navigation to the email verification page
-        window.location.href = '/user-dashboard';
-      } 
-      catch (error) {
-        setError(error.message);
+        console.log('User document created');
+      } else {
+        console.log('User already exists in Firestore');
       }
-    };
-    
-       const loginWithGoogle = async () => {
-        try {
-          const userCredential = await signInWithPopup(auth, googleProvider);
-          const user = userCredential.user;
-          dispatch({ type: "SIGNUP", payload: user });
-          await db.collection('users').doc(user.uid).set({
-            email: user.email,
-            firstName: 'Google-user',
-            role: 'basic',
-            // Add other user data as needed
-          });
-          <Link href={'/user-dashboard'}>
-          </Link>
-              } 
-              catch (error) {
-          setError(error.message);
-        }
-      };
+
+      dispatch({ type: "SIGNUP", payload: user });
+      console.log('Redirecting to user dashboard');
+      window.location.href = '/user-dashboard';
+    } catch (error) {
+      console.error('Error signing in with Google or creating the user document:', error);
+      setError(error.message);
+    }
+  };
 
 
-    return (
-            <>
+  return (
+    <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
@@ -86,7 +104,7 @@ const SignUp = () => {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSignUp}>
 
-          <div>
+            <div>
               <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
                 First Name
               </label>
@@ -183,15 +201,15 @@ const SignUp = () => {
               </button>
             </div>
             <div>
-              <button  
-                type="submit"
+              <button
+                type="button"
                 className="flex w-full justify-center rounded-md bg-blue-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
                 onClick={loginWithGoogle}
-                >
-                  Sign up with Google Account
-                </button>
+              >
+                Sign up with Google Account
+              </button>
             </div>
-      
+
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
@@ -205,7 +223,7 @@ const SignUp = () => {
       </div>
     </>
 
-    );
+  );
 };
 
 export default SignUp;

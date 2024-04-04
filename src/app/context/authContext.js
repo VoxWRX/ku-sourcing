@@ -44,6 +44,7 @@ export const AuthContextProvider = ({ children }) => {
                 ...userDoc.data(), // Spread the additional user info from Firestore
               }
             });
+
           } else {
             console.log("No additional user info found!");
           }

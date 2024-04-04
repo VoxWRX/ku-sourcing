@@ -35,8 +35,8 @@ function Navbar() {
   };
 
   const userNavigation = [
-    { name: currentUser ? currentUser.firstName : 'User' },
-    { name: 'Settings', href: '#' },
+    { name: currentUser ? currentUser.firstName : 'User', href: '/user-dashboard' },
+    { name: 'Settings', href: '/user-settings' },
     { name: 'Sign out', onClick: logOut },
   ]
   console.log(currentUser)
@@ -105,7 +105,7 @@ function Navbar() {
               <Menu.Button className="relative flex hover:scale-125 duration-150 cursor-pointer max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">Open user menu</span>
-                <img className="h-8 w-8 rounded-full" src={currentUser && currentUser.photoURL ? currentUser.photoURL : "https://images.unsplash.com/photo-1503354531728-dedfa6cb4e8d?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} alt="kuai sourcing" />
+                <img className="h-8 w-8 rounded-full" src={currentUser && currentUser.profilePicture ? currentUser.profilePicture : "https://images.unsplash.com/photo-1503354531728-dedfa6cb4e8d?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} alt="kuai sourcing" />
               </Menu.Button>
             </div>
             <Transition
@@ -137,7 +137,7 @@ function Navbar() {
               </Menu.Items>
             </Transition>
           </Menu>
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900 hover:scale-125 duration-150 cursor-pointer">
+          <a href="/login" className="text-sm font-semibold leading-6 text-gray-900 hover:scale-125 duration-150 cursor-pointer">
             <MdAdminPanelSettings className="text-xl" />
             Admin <span aria-hidden="true">&rarr;</span>
           </a>
@@ -222,7 +222,7 @@ function Navbar() {
                     <div className="flex items-center space-x-3">
                       <img
                         className="h-10 w-10 rounded-full"
-                        src={currentUser && currentUser.photoURL ? currentUser.photoURL : "https://images.unsplash.com/photo-1503354531728-dedfa6cb4e8d?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
+                        src={currentUser && currentUser.profilePicture ? currentUser.profilePicture : "https://images.unsplash.com/photo-1503354531728-dedfa6cb4e8d?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
                         alt="kuai sourcing"
                       />
                     </div>
@@ -241,7 +241,7 @@ function Navbar() {
                   </div>
 
                   <a
-                    href="#"
+                    href="/login"
                     className="-mx-3 flex justify-between-left space-x-2  rounded-lg px-3 py-2 text-base font-semibold  text-gray-900 hover:bg-gray-50"
                   >
                     <MdAdminPanelSettings className="text-2xl text-gray-900 my-2" />

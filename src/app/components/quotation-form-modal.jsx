@@ -54,10 +54,10 @@ const QuotationFormModal = ({ order, destinationIndex, onClose, onSave }) => {
 
     return (
 
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center p-4">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex justify-center items-center p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full space-y-4">
                 <h2 className="text-xl font-semibold">Quotation for {order.productName}</h2>
-                <p className="text-sm text-gray-600">Once submitted you can't modify this quotation!</p>
+                <p className="text-sm text-red-500">Once submitted you can't modify this quotation!</p>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {Object.keys(quotationData).map((key) => (
                         <input
@@ -72,8 +72,8 @@ const QuotationFormModal = ({ order, destinationIndex, onClose, onSave }) => {
                         />
                     ))}
                     <div className="flex justify-end gap-2">
-                        <button type="button" onClick={onClose} className="py-2 px-4 border rounded text-gray-600 hover:bg-gray-100">Cancel</button>
-                        <button type="submit" className="py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700">Submit</button>
+                        <button type="button" onClick={onClose} className="py-2 px-4 border rounded-lg text-gray-600 hover:bg-gray-100">Cancel</button>
+                        <button type="submit" className="py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Submit</button>
                     </div>
                 </form>
             </div>
