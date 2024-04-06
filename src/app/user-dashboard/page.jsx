@@ -1,31 +1,27 @@
 "use client"
 
-import Subtitle from "../components/dashboard-subtitle";
+import DataCards from "../components/data-cards";
 import Footer from "../components/footer";
-import { GlobeWorld } from "../components/globe-world";
+import SupportComponent from "../components/get-support";
 import Navbar from "../components/navbar";
 import Steps from "../components/steps";
-import { SparklesBlack } from "../components/ui/sparkles-main";
-
 import withAuth from "../context/withAuth";
 
 
-function Home() {
+function Dashboard() {
 
   return (
-      <main className="min-h-screen flex-col items-center justify-between ">
-      <div className="text-sm">
-        <Navbar />
+    <main className="min-h-screen flex-col items-center justify-between ">
+      <Navbar />
+      <DataCards />
 
-        <SparklesBlack />
-        <GlobeWorld />
-        <Subtitle />
-        <Steps />
-        <Footer />
-      </div>
-     </main>
-    
+      <Steps />
+      <SupportComponent />
+      <Footer />
+    </main>
+
   );
 }
 
-export default withAuth(Home);
+export default withAuth(Dashboard);
+

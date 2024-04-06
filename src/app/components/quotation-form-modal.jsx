@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../config/firebase";
 
-const QuotationFormModal = ({ order, destinationIndex, onClose, onSave }) => {
+const QuotationFormModal = ({ order, destinationIndex, quantity, service, onClose, onSave }) => {
 
     const [quotationData, setQuotationData] = useState({
         unitPrice: '',
@@ -14,6 +14,7 @@ const QuotationFormModal = ({ order, destinationIndex, onClose, onSave }) => {
         totalCost: '',
         // Any additional fields as needed
     });
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -54,10 +55,13 @@ const QuotationFormModal = ({ order, destinationIndex, onClose, onSave }) => {
 
     return (
 
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex justify-center items-center p-4">
+        <div className="fixed z-50 inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full space-y-4">
-                <h2 className="text-xl font-semibold">Quotation for {order.productName}</h2>
+                <h2 className="text-xl font-medium"><b>Quotation for </b> {order.productName}</h2>
+                <p className='text-sm text-gray-600'><b>with a quantity of :</b> {quantity}</p>
+                <p className='text-sm text-gray-600'><b>and the selected service is : </b> {service}</p>
                 <p className="text-sm text-red-500">Once submitted you can't modify this quotation!</p>
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {Object.keys(quotationData).map((key) => (
                         <input
@@ -78,6 +82,7 @@ const QuotationFormModal = ({ order, destinationIndex, onClose, onSave }) => {
                 </form>
             </div>
         </div>
+
     );
 };
 

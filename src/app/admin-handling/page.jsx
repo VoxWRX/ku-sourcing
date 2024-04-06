@@ -18,6 +18,8 @@ const AdminHandling = () => {
     const [showQuotationModal, setShowQuotationModal] = useState(false);
     const [selectedDestinationIndex, setSelectedDestinationIndex] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
+    const [selectedQuantity, setSelectedQuantity] = useState('');
+    const [selectedService, setSelectedService] = useState('');
     const [filter, setFilter] = useState({
         reference: '',
         status: '',
@@ -110,11 +112,16 @@ const AdminHandling = () => {
     };
 
 
-    const openQuotationModal = (order, destinationIndex) => {
-        setSelectedOrder(order);
+    const openQuotationModal = (orderIndex, destinationIndex) => { // Change 'order' to 'orderIndex' to clarify it's an index
+        setSelectedOrder(orderIndex); // Set the index, not the object
         setSelectedDestinationIndex(destinationIndex);
+        // Assuming 'orderIndex' is used to find the specific order in the 'orders' array:
+        const order = orders[orderIndex]; // Access the order object using the index
+        setSelectedQuantity(order.destinations[destinationIndex].quantity);
+        setSelectedService(order.destinations[destinationIndex].service);
         setShowQuotationModal(true);
     };
+
 
     // When saving a quotation, update the filled status for the correct destination
     const handleSaveQuotation = (updatedOrder, destinationIndex) => {
@@ -170,7 +177,8 @@ const AdminHandling = () => {
                             <p className='font-semibold text-lg'>Quotation submitted successfully!</p>
                         </div>
                     )}
-                    <h1 className="text-3xl font-bold text-gray-800 mb-10 text-center">Admin Handling</h1>
+                    <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Admin Handling</h1>
+                    <p className="mt-6 text-lg mb-10 leading-8 text-gray-600 text-center">Update each order status, fill quotations and upload real images.</p>
                     <div className="flex gap-4 mb-6">
                         <input
                             type="text"
@@ -244,9 +252,7 @@ const AdminHandling = () => {
                                             className={`mt-2 mb-2 p-2 w-full rounded-lg text-white transition-colors ${isQuotationFilled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                                             onClick={() => {
                                                 if (!isQuotationFilled) {
-                                                    setSelectedOrder(orderIndex);
-                                                    setSelectedDestinationIndex(index);
-                                                    setShowQuotationModal(true);
+                                                    openQuotationModal(orderIndex, index);
                                                 }
                                             }}
                                             disabled={isQuotationFilled}
@@ -263,6 +269,8 @@ const AdminHandling = () => {
                         <QuotationFormModal
                             order={orders[selectedOrder]}
                             destinationIndex={selectedDestinationIndex}
+                            quantity={selectedQuantity} // Passing the selected quantity as a prop
+                            service={selectedService} // Passing the selected service as a prop
                             onClose={() => setShowQuotationModal(false)}
                             onSave={() => {
                                 const updatedOrders = [...orders];
