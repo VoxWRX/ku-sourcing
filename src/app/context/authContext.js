@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useEffect, useReducer, useState } from "react";
 import AuthReducer from "./authReducer"
 import { auth, db } from "../config/firebase";
 import { doc, getDoc } from 'firebase/firestore';
@@ -27,33 +27,40 @@ export const AuthContext = createContext(INITIAL_STATE);
 
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
+  const [isUserInfoFetched, setIsUserInfoFetched] = useState(false);
 
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async(user) => {
       if (user) {
         const fetchUserInfo = async () => {
           const userDocRef = doc(db, 'users', user.uid);
           const userDoc = await getDoc(userDocRef);
   
           if (userDoc.exists()) {
+            const userInfo = {
+              uid: user.uid, 
+              ...userDoc.data(),
+            };
+            console.log("Fetched User Info:", userInfo); // Log the fetched user info
             dispatch({
               type: 'SET_USER_INFO',
-              payload: {
-                uid: user.uid, // Preserve the uid from the auth state
-                ...userDoc.data(), // Spread the additional user info from Firestore
-              }
+              payload: userInfo,
             });
 
           } else {
             console.log("No additional user info found!");
           }
+          setIsUserInfoFetched(true); // Set to true after user info is fetched or not found
+
         };
   
         dispatch({ type: 'LOGIN', payload: user });
         fetchUserInfo();
       } else {
         dispatch({ type: 'LOGOUT' });
+        setIsUserInfoFetched(true); // Set to true when there's no user
+
       }
     });
   
@@ -76,6 +83,7 @@ export const AuthContextProvider = ({ children }) => {
 
   const contextValue = {
     currentUser: state.currentUser,
+    isUserInfoFetched,
     dispatch,
     login,
     logout,

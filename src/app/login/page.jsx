@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, getAut
 import { auth, db, googleProvider } from '../config/firebase';
 import { AuthContext } from "../context/authContext";
 import { getDoc, setDoc, doc } from "firebase/firestore";
+import { FaGoogle } from "react-icons/fa";
 
 
 const Login = () => {
@@ -36,12 +37,22 @@ const Login = () => {
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      // Signed in
       const user = userCredential.user;
-      dispatch({ type: "LOGIN", payload: user });
-      window.location.href = '/user-dashboard';
-    }
-    catch (error) {
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        dispatch({ type: "LOGIN", payload: { ...user, role: userData.role } });
+        if (userData.role === 'admin') {
+          window.location.href = '/admin-dashboard';
+        } else {
+          window.location.href = '/user-dashboard';
+        }
+      } else {
+        setError('User does not exist in Firestore.');
+      }
+
+    } catch (error) {
       setError(error.message);
     }
   };
@@ -51,24 +62,24 @@ const Login = () => {
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
       const user = userCredential.user;
-      console.log('User signed in with Google:', user);
-
       const userRef = doc(db, 'users', user.uid);
 
       // Checking if the user exists in Firestore
       const docSnap = await getDoc(userRef);
 
-      if (!docSnap.exists()) {
-        setTimeout(() => {
-          window.location.href = '/sign-up';
-        }, 2000); // Delay redirect by 2 second      
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        dispatch({ type: "LOGIN", payload: { ...user, role: userData.role } });
+        if (userData.role === 'admin') {
+          window.location.href = '/admin-dashboard';
+        } else {
+          window.location.href = '/user-dashboard';
+        }
       } else {
-        console.log('User document exists, proceeding to dashboard.');
-        dispatch({ type: "LOGIN", payload: user });
-        window.location.href = '/user-dashboard';
+        // Redirect to sign-up if the user does not exist in Firestore
+        window.location.href = '/sign-up';
       }
     } catch (error) {
-      console.error('Error signing in with Google or creating the user document:', error);
       setError(error.message);
     }
   };
@@ -147,7 +158,7 @@ const Login = () => {
                 className="flex w-full justify-center rounded-md bg-blue-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
                 onClick={loginWithGoogle}
               >
-                Sign in with Google Account
+                <FaGoogle className='font-bold text-xl mr-4' /> Sign in with Google Account
               </button>
             </div>
             <div>

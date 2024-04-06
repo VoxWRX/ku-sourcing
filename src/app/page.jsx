@@ -7,6 +7,7 @@ import Steps from "./components/steps";
 import { SparklesBlack } from "./components/ui/sparkles-main";
 import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";
 import About from "./components/about-us";
+import Testemonials from "./components/testemonials";
 
 function Home() {
   return (
@@ -24,6 +25,7 @@ function Home() {
           <Subtitle />
           <Steps />
           <About />
+          <Testemonials />
           <ContactForm />
           <Footer />
         </div>

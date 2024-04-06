@@ -5,6 +5,7 @@ import { auth, db, googleProvider } from '../config/firebase';
 import { AuthContext } from '../context/authContext';
 import { createUserWithEmailAndPassword, signInWithPopup } from '@firebase/auth';
 import { setDoc, doc, getDoc } from '@firebase/firestore';
+import { FaGoogle } from "react-icons/fa";
 
 
 const SignUp = () => {
@@ -206,7 +207,7 @@ const SignUp = () => {
                 className="flex w-full justify-center rounded-md bg-blue-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
                 onClick={loginWithGoogle}
               >
-                Sign up with Google Account
+                <FaGoogle className='font-bold text-xl mr-4' /> Sign up with Google Account
               </button>
             </div>
 

@@ -8,6 +8,7 @@ import QuotationFormModal from '../components/quotation-form-modal';
 import { MdClose } from 'react-icons/md';
 import BackgroundBeams from '../components/ui/backgound-beams';
 import Sidebar from './Sidebar';
+import withAuth from '../context/withAuth';
 
 
 
@@ -112,11 +113,10 @@ const AdminHandling = () => {
     };
 
 
-    const openQuotationModal = (orderIndex, destinationIndex) => { // Change 'order' to 'orderIndex' to clarify it's an index
-        setSelectedOrder(orderIndex); // Set the index, not the object
+    const openQuotationModal = (orderIndex, destinationIndex) => {
+        setSelectedOrder(orderIndex);
         setSelectedDestinationIndex(destinationIndex);
-        // Assuming 'orderIndex' is used to find the specific order in the 'orders' array:
-        const order = orders[orderIndex]; // Access the order object using the index
+        const order = orders[orderIndex];
         setSelectedQuantity(order.destinations[destinationIndex].quantity);
         setSelectedService(order.destinations[destinationIndex].service);
         setShowQuotationModal(true);
@@ -287,4 +287,4 @@ const AdminHandling = () => {
     );
 };
 
-export default AdminHandling;
+export default withAuth(AdminHandling, true);

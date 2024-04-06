@@ -1,9 +1,12 @@
+"use client"
+
 import React from 'react';
 import LineChart from "./admin-dashboard-components/LineChart";
 import ClientsComments from "./admin-dashboard-components/ClientsComments";
 import Header from "./admin-dashboard-components/Header";
 import Sidebar from "./admin-dashboard-components/Sidebar";
 import TopCards from "./admin-dashboard-components/TopCards";
+import withAuth from '../context/withAuth';
 
 const AdminDashboard = () => {
   return (
@@ -25,4 +28,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default withAuth(AdminDashboard, true);

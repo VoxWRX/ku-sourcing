@@ -1,16 +1,27 @@
 import { useContext, useEffect } from 'react';
 import { AuthContext } from './authContext';
 
-const withAuth = (WrappedComponent) => {
+const withAuth = (WrappedComponent, adminOnly = false) => {
   return (props) => {
-    const { currentUser } = useContext(AuthContext);
+    const { currentUser, isUserInfoFetched } = useContext(AuthContext);
 
     useEffect(() => {
-      // Here to check if currentUser is null and current page is not the login page
-      if (!currentUser && window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      // Wait until the user info is fetched before checking the user's role
+      if (isUserInfoFetched) {
+        if (!currentUser && window.location.pathname !== '/login') {
+          window.location.href = '/login';
+          return;
+        }
+        if (adminOnly && currentUser?.role !== 'admin') {
+          window.location.href = '/not-authorized';
+          console.log("Redirecting non-admin user:", currentUser); // Log for debugging
+          return;
+        }
       }
-    }, [currentUser]);
+    }, [currentUser, isUserInfoFetched]);
+
+    // If the user info is not yet fetched, render null or a loading spinner
+    if (!isUserInfoFetched) return null;
 
     // If currentUser is not null render the wrapped component
     return currentUser ? <WrappedComponent {...props} /> : null;

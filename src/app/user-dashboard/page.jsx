@@ -1,10 +1,12 @@
 "use client"
 
+import StepsComponent from "../components/dashboard-steps";
 import DataCards from "../components/data-cards";
+import Faqs from "../components/faqs";
 import Footer from "../components/footer";
 import SupportComponent from "../components/get-support";
 import Navbar from "../components/navbar";
-import Steps from "../components/steps";
+import ProductRecommendations from "../components/recommendation";
 import withAuth from "../context/withAuth";
 
 
@@ -15,7 +17,9 @@ function Dashboard() {
       <Navbar />
       <DataCards />
 
-      <Steps />
+      <StepsComponent />
+      <ProductRecommendations />
+      <Faqs />
       <SupportComponent />
       <Footer />
     </main>

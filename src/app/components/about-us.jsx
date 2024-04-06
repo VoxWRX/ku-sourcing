@@ -24,7 +24,7 @@ const About = () => {
                         <Lottie animationData={AnimationSourcing}
                             loop={true}
                             autoplay={true}
-                            style={{ width: '100%', height: 'auto', maxWidth: '200px' }}  // Adjusted for responsive size
+                            style={{ width: '100%', height: 'auto', maxWidth: '200px' }}
                         />
                     </div>
 
@@ -47,7 +47,7 @@ const About = () => {
                         <Lottie animationData={AnimationExpertise}
                             loop={true}
                             autoplay={true}
-                            style={{ width: '100%', height: 'auto', maxWidth: '200px' }}  // Adjusted for responsive size
+                            style={{ width: '100%', height: 'auto', maxWidth: '250px' }}
                         />
                     </div>
                 </div>
