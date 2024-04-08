@@ -1,12 +1,20 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { RxDashboard } from 'react-icons/rx'
 import { MdBorderColor } from "react-icons/md";
 import { IoMdSettings } from "react-icons/io";
-import { FaListUl } from "react-icons/fa";
+import { FaListUl, FaSignOutAlt } from "react-icons/fa";
+import { AuthContext } from '../context/authContext';
+
 
 const Sidebar = ({ children }) => {
+    const { logout } = useContext(AuthContext);
+
+    const handleLogout = () => {
+        logout().catch(error => console.error("Logout error:", error));
+        window.location.href = '/login';
+    };
     return (
         <div className='flex z-50'>
             <div className='fixed w-20 h-screen p-4 bg-white border-r-[1px] flex flex-col justify-between'>
@@ -34,10 +42,13 @@ const Sidebar = ({ children }) => {
                         </div>
                     </Link>
                 </div>
+                <div onClick={handleLogout} className='bg-red-100 hover:bg-red-300 cursor-pointer my-4 p-3 rounded-lg inline-block text-center'>
+                    <FaSignOutAlt size={20} />
+                </div>
             </div>
             <main className='ml-20 w-full'>{children}</main>
         </div>
     )
 }
 
-export default Sidebar
+export default Sidebar;

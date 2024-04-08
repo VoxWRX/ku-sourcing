@@ -57,7 +57,7 @@ const OrderCards = () => {
 
           {/* Conditional rendering to display a message if there are no items or render the list of items */}
           {sourcingRequestsList.length === 0 ? (
-            <p className="mt-6 text-xl leading-8 text-gray-900">No sourcing requests found !</p>
+            <p className="mt-10 text-2xl leading-8 text-gray-900">No sourcing requests found !</p>
           ) : (
             sourcingRequestsList.map(item => (
               <div key={item.id} className="mx-auto mt-14 max-w-2xl rounded-3xl shadow-lg bg-white ring-1 ring-gray-200 sm:mt-16 lg:mx-0 lg:flex items-center justify-center lg:max-w-none">
@@ -133,7 +133,6 @@ const OrderCards = () => {
           )}
         </div>
       </div>
-
     </>
   );
 };

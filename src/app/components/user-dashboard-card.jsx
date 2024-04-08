@@ -11,7 +11,7 @@ const DashboardCard = ({ title, value, trend, viewAll }) => {
                 <div className="text-4xl font-bold text-gray-900">{value}</div>
             </div>
             <div className="px-6 py-4 bg-gray-50 text-right">
-                <a href={'/user-sourcing-orders'} className="text-blue-500 hover:text-blue-700 transform hover:scale-110 transition duration-300 ease-in-out text-sm"
+                <a href={'/user-handling'} className="text-blue-500 hover:text-blue-700 transform hover:scale-110 transition duration-300 ease-in-out text-sm"
                 >
                     {viewAll}
                 </a>

@@ -7,6 +7,7 @@ import Header from "./admin-dashboard-components/Header";
 import Sidebar from "./admin-dashboard-components/Sidebar";
 import TopCards from "./admin-dashboard-components/TopCards";
 import withAuth from '../context/withAuth';
+import AdminCommentsSection from '../components/admin-comment';
 
 const AdminDashboard = () => {
   return (
@@ -20,7 +21,7 @@ const AdminDashboard = () => {
             <LineChart />
           </div>
           <div className="w-full md:w-1/3">
-            <ClientsComments />
+            <AdminCommentsSection />
           </div>
         </div>
       </div>

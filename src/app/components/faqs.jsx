@@ -15,7 +15,7 @@ const faqs = [
     },
     {
         question: "How do I complete my purchase?",
-        answer: "After receiving confirmation from our admin team that your product has been sourced,you will be directed to complete your purchase. This involves confirming your order details and proceeding with payment through our secure payment system."
+        answer: "After receiving confirmation from our admin team that your product has been sourced, you will see unpaid status on your order then you can see quotation and proceed to complete your purchase. This involves confirming your order details and proceeding with payment through our secure payment system."
     },
     {
         question: "What if I have specific requirements for my product?",
@@ -23,22 +23,24 @@ const faqs = [
     },
 ];
 
-const FaqItem = ({ faq, index, toggle, active }) => (
-    <div className={`p-4 mb-2 bg-white shadow-lg rounded-md ${active === index ? 'ring-2 ring-indigo-200' : ''}`}>
-        <h3 className="text-lg font-semibold cursor-pointer" onClick={() => toggle(index)}>
-            {faq.question}
-        </h3>
-        <p className={`mt-2 text-gray-600 ${active === index ? 'block' : 'hidden'}`}>
-            {faq.answer}
-        </p>
-    </div>
-);
+const FaqItem = ({ faq, isActive, toggle }) => {
+    return (
+        <div className="p-4 mb-2 bg-white shadow-lg rounded-md">
+            <h3 className="text-lg font-semibold cursor-pointer" onClick={toggle}>
+                {faq.question}
+            </h3>
+            <div className={`mt-2 text-gray-600 transition-height duration-500 ease-in-out overflow-hidden ${isActive ? 'max-h-96' : 'max-h-0'}`}>
+                {faq.answer}
+            </div>
+        </div>
+    );
+};
 
 const Faqs = () => {
     const [activeIndex, setActiveIndex] = useState(null);
 
-    const toggleFAQ = index => {
-        setActiveIndex(activeIndex === index ? null : index);
+    const toggleFAQ = (index) => {
+        setActiveIndex((prevIndex) => (prevIndex === index ? null : index));
     };
 
     return (
@@ -48,7 +50,12 @@ const Faqs = () => {
             </div>
             <div className="space-y-4">
                 {faqs.map((faq, index) => (
-                    <FaqItem key={index} faq={faq} index={index} toggle={toggleFAQ} active={activeIndex} />
+                    <FaqItem
+                        key={index}
+                        faq={faq}
+                        isActive={activeIndex === index}
+                        toggle={() => toggleFAQ(index)}
+                    />
                 ))}
             </div>
         </div>

@@ -44,7 +44,7 @@ const SignUp = () => {
         // Add other user data as needed
       });
 
-      // change this navigation to the email verification page
+      // change this navigation to the email verification page later
       window.location.href = '/user-dashboard';
     }
     catch (error) {

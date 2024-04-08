@@ -4,9 +4,9 @@ import StepsComponent from "../components/dashboard-steps";
 import DataCards from "../components/data-cards";
 import Faqs from "../components/faqs";
 import Footer from "../components/footer";
-import SupportComponent from "../components/get-support";
 import Navbar from "../components/navbar";
 import ProductRecommendations from "../components/recommendation";
+import CommentsSection from "../components/user-comments";
 import withAuth from "../context/withAuth";
 
 
@@ -19,8 +19,15 @@ function Dashboard() {
 
       <StepsComponent />
       <ProductRecommendations />
-      <Faqs />
-      <SupportComponent />
+      <div className="flex flex-col my-10 mx-4 w-full lg:flex-row items-center justify-center">
+        <div className="grid h-auto mx-6 place-items-center">
+          <Faqs />
+        </div>
+        <div className="divider lg:divider-horizontal"></div>
+        <div className="grid h-auto mx-6 place-items-center">
+          <CommentsSection />
+        </div>
+      </div>
       <Footer />
     </main>
 
