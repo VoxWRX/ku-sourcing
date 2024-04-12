@@ -11,9 +11,15 @@ const QuotationFormModal = ({ order, destinationIndex, quantity, service, onClos
         commissionOfService: '',
         unitWeight: '',
         deliveryCostInChina: '',
-        totalCost: '',
         // Any additional fields as needed
     });
+
+    const totalCost = React.useMemo(() => {
+        const unitPrice = parseFloat(quotationData.unitPrice) || 0;
+        const commissionOfService = parseFloat(quotationData.commissionOfService) || 0;
+        const deliveryCostInChina = parseFloat(quotationData.deliveryCostInChina) || 0;
+        return (unitPrice * quantity) + commissionOfService + deliveryCostInChina;
+    }, [quotationData, quantity]); // Recalculate if these dependencies change
 
 
     const handleChange = (e) => {
@@ -26,14 +32,13 @@ const QuotationFormModal = ({ order, destinationIndex, quantity, service, onClos
 
         const destinationCountry = order.destinations[destinationIndex].country;
 
-        // Adding the quotation to Firestore
         const quotationRef = collection(db, "quotation");
         await addDoc(quotationRef, {
             ...quotationData,
+            totalCost: totalCost.toFixed(2),
             orderId: order.id,
             country: destinationCountry,
         });
-
 
         // Marking the quotation as filled for the corresponding destination
         const updatedOrder = {
@@ -48,7 +53,6 @@ const QuotationFormModal = ({ order, destinationIndex, quantity, service, onClos
 
         // onSave to update the parent component's state
         onSave(updatedOrder);
-
 
         onClose();
     };
@@ -75,6 +79,9 @@ const QuotationFormModal = ({ order, destinationIndex, quantity, service, onClos
                             required
                         />
                     ))}
+                    <div className="text-sm text-gray-800">
+                        Total Cost: <span className="font-semibold">{totalCost.toFixed(2)}</span>
+                    </div>
                     <div className="flex justify-end gap-2">
                         <button type="button" onClick={onClose} className="py-2 px-4 border rounded-lg text-gray-600 hover:bg-gray-100">Cancel</button>
                         <button type="submit" className="py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Submit</button>

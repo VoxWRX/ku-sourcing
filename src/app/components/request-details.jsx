@@ -15,6 +15,9 @@ const Details = ({ status, orderId }) => {
   const [orderDetails, setOrderDetails] = useState(null);
   const [quotationDetails, setQuotationDetails] = useState([]);
   const [realImages, setRealImages] = useState([]);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   const fetchOrderDetails = async () => {
     // Fetching order details from the 'product_request_forms' collection
@@ -54,6 +57,34 @@ const Details = ({ status, orderId }) => {
       }
     } else {
       console.log("No such document in product_request_forms!");
+    }
+  };
+
+  // Fetch user data and check verification status
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(userRef);
+
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          setIsVerified(userData.isVerified || false); // Default to false if not set
+        } else {
+          console.error("No user document found!");
+        }
+      }
+      setIsLoading(false);
+    };
+
+    fetchUserData();
+  }, [currentUser]);
+
+  const handlePaymentClick = () => {
+    if (isVerified) {
+      window.location.href = '/user-payment';
+    } else {
+      window.location.href = '/confirm-identity';
     }
   };
 
@@ -160,12 +191,13 @@ const Details = ({ status, orderId }) => {
                             Taxes are not included <a href='/https://wa.me/+447466068298?text=Hello%20What%20about%20taxes!' className='text-blue-400 hover:text-blue-500'>contact us</a> to learn more.
                           </p>
                           <div className="mt-6">
-                            <a
-                              href="/user-payment"
+                            <button
                               className="flex items-center justify-center rounded-lg border border-transparent bg-blue-400 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-500"
+                              onClick={handlePaymentClick}
+                              disabled={isLoading}
                             >
-                              Proceed to payment
-                            </a>
+                              {isLoading ? 'Loading...' : 'Proceed to payment'}
+                            </button>
                           </div>
                         </div>
                       </div>

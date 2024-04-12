@@ -8,8 +8,25 @@ import { SparklesBlack } from "./components/ui/sparkles-main";
 import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";
 import About from "./components/about-us";
 import Testemonials from "./components/testemonials";
+import { useEffect, useState } from "react";
+import LoadingIndicator from "./components/alerts/loading-indicator";
 
 function Home() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 3000);
+    };
+
+    loadData();
+  }, []);
+
+  if (isLoading) {
+    return <LoadingIndicator />
+  }
   return (
     <main className="min-h-screen flex flex-col items-center justify-between">
       <div className="relative w-full">

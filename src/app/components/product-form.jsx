@@ -1,7 +1,7 @@
 "use client"
 
 import { PhotoIcon, CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid'
-import { Fragment, useContext, useState } from 'react'
+import { Fragment, useContext, useState, useEffect } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import Destinations from './destinations'
 import { TypewriterEffectSourcing } from './writer-source'
@@ -10,6 +10,7 @@ import { db } from '../config/firebase'
 import { AuthContext } from '../context/authContext'
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import NotificationForm from './alerts/form-submit-success'
+import { useGlobalContext } from '../context/globalContext'
 
 
 const category = [
@@ -58,6 +59,7 @@ export default function SourcingRequestForm() {
   const [file, setFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
+  const { selectedProduct, setSelectedProduct } = useGlobalContext();
 
   const [formData, setFormData] = useState({
     productName: '',
@@ -145,6 +147,30 @@ export default function SourcingRequestForm() {
     }
   };
 
+  useEffect(() => {
+    if (selectedProduct) {
+      setFormData({ ...formData, productName: selectedProduct.name, category: selectedProduct.category });
+      setImageUrl(selectedProduct.imageUrl);
+
+      const selectedCategoryObj = category.find(cat => cat.name === selectedProduct.category);
+      if (selectedCategoryObj) setSelectedCategory(selectedCategoryObj);
+    } else {
+      // If no product is selected, reset the form and imageUrl to their initial states
+      setFormData({
+        productName: '',
+        productImage: null,
+        productURL: '',
+        category: selectedCategory.name,
+        additionalNotes: '',
+        airFreight: false,
+        status: 'Processing',
+        formCreationDate: new Date(),
+      });
+      setImageUrl(''); // Reset the image preview URL
+    }
+
+  }, [selectedProduct]);
+
 
   return (
     <form onSubmit={handleSubmit}>
@@ -169,7 +195,9 @@ export default function SourcingRequestForm() {
                   autoComplete="product"
                   className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                   placeholder="name here..."
+                  value={formData.productName}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
             </div>
@@ -193,7 +221,7 @@ export default function SourcingRequestForm() {
                         className="relative cursor-pointer rounded-md p-1 bg-white font-semibold text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-400 focus-within:ring-offset-2 hover:text-blue-500"
                       >
                         <span>Upload a file</span>
-                        <input onChange={handleFileChange} id="file-upload" name="productImage" type="file" className="sr-only" />
+                        <input onChange={handleFileChange} required id="file-upload" name="productImage" type="file" className="sr-only" />
                       </label>
                       <p className="pl-1">or drag and drop</p>
                     </div>
@@ -304,7 +332,7 @@ export default function SourcingRequestForm() {
 
         <div className="border-b border-gray-900/10 pb-12 ">
           <h2 className="text-base font-semibold leading-7 text-gray-900 after:content-['*'] after:ml-0.5 after:text-red-500">Destination Country</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">Use an address where you can receive mail.</p>
+          <p className="mt-1 text-sm leading-6 text-gray-600">You can use more than one destination for the same product.</p>
 
           <Destinations onUpdateDestinations={handleUpdateDestinations} />
 

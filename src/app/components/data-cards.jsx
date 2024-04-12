@@ -39,7 +39,12 @@ const DataCards = () => {
                     const orderData = doc.data();
                     if (orderData.status === 'Unpaid') {
                         unpaidOrders++;
-                    } else if (orderData.status === 'Paid') {
+                    } else if (orderData.status === 'Arrived') {
+                        paidOrders++;
+                    } else if (orderData.status === 'Shipped') {
+                        paidOrders++;
+                    }
+                    else if (orderData.status === 'Paid') {
                         paidOrders++;
                     }
                 });

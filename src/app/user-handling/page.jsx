@@ -1,19 +1,28 @@
 "use client"
 
 import React, { useContext, useEffect, useState } from "react";
-import { FlagIcon, CurrencyDollarIcon, Square3Stack3DIcon, CalendarDaysIcon, GlobeAltIcon } from '@heroicons/react/20/solid'
+import { FlagIcon, CurrencyDollarIcon, Square3Stack3DIcon, CalendarDaysIcon, TruckIcon } from '@heroicons/react/20/solid';
 import Navbar from "../components/navbar";
 import Details from "../components/request-details";
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import withAuth from "../context/withAuth";
 import { db } from "../config/firebase";
 import { AuthContext } from "../context/authContext";
+import LoadingIndicator from "../components/alerts/loading-indicator";
+import { RocketLaunchIcon } from "@heroicons/react/24/solid";
 
 
 const OrderCards = () => {
 
   const { currentUser } = useContext(AuthContext);
   const [sourcingRequestsList, setSourcingRequestsList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  }, []);
 
   useEffect(() => {
     const getSourcingRequestsList = async () => {
@@ -42,6 +51,11 @@ const OrderCards = () => {
   }, [currentUser]); // Depend on currentUser to re-fetch when it changes
 
 
+  if (isLoading) {
+    return <LoadingIndicator />
+  }
+
+
   return (
     <>
       <Navbar />
@@ -68,8 +82,12 @@ const OrderCards = () => {
                     <CalendarDaysIcon className="h-6 w-5 ml-2 text-gray-500" />
                   </p>
                   <p className="mt-4 text-base leading-7 text-gray-600 flex justify-center items-center">
-                    <p className="text-sm font-semibold text-gray-600"><b>Shipment: </b> {item.shippingType}</p>
-                    <GlobeAltIcon className="h-6 w-5 ml-2 text-gray-500" />
+                    <p><b>Shipment: </b> {item.shippingType}</p>
+                    {item.shippingType === 'Express Shipping' ? (
+                      <RocketLaunchIcon className="h-6 w-5 ml-2 text-gray-500" />
+                    ) : (
+                      <TruckIcon className="h-6 w-5 ml-2 text-gray-500" />
+                    )}
                   </p>
                   <div className="mt-10 flex items-center gap-x-4">
                     <h4 className="flex-none text-sm font-semibold leading-6 text-blue-600">Informations</h4>
@@ -107,10 +125,14 @@ const OrderCards = () => {
                         ${item.status === "Paid"
                             ? "bg-green-400"
                             : item.status === "Processing"
-                              ? "bg-blue-400"
+                              ? "bg-gray-400"
                               : item.status === "Unpaid"
                                 ? "bg-red-400"
-                                : "bg-blue-300"
+                                : item.status === "Shipped"
+                                  ? "bg-blue-400"
+                                  : item.status === "Arrived"
+                                    ? "bg-green-700"
+                                    : "bg-gray-500"
                           }`}
                       >
                         {item.status}

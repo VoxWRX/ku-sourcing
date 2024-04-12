@@ -9,6 +9,7 @@ import { MdClose } from 'react-icons/md';
 import BackgroundBeams from '../components/ui/backgound-beams';
 import Sidebar from './Sidebar';
 import withAuth from '../context/withAuth';
+import LoadingIndicator from '../components/alerts/loading-indicator';
 
 
 
@@ -27,7 +28,13 @@ const AdminHandling = () => {
         productName: ''
     });
 
+    const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 4000);
+    }, []);
 
 
     useEffect(() => {
@@ -155,7 +162,7 @@ const AdminHandling = () => {
         setFilter(prev => ({ ...prev, [name]: value }));
     };
 
-    // Get filtered orders
+
     const filteredOrders = orders.filter((order) => {
         return (
             (filter.reference ? order.id.toLowerCase().includes(filter.reference.toLowerCase()) : true) &&
@@ -163,6 +170,10 @@ const AdminHandling = () => {
             (filter.productName ? order.productName.toLowerCase().includes(filter.productName.toLowerCase()) : true)
         );
     });
+
+    if (isLoading) {
+        return <LoadingIndicator />;
+    }
 
 
     return (
@@ -209,7 +220,7 @@ const AdminHandling = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                         {filteredOrders.map((order, orderIndex) => (
-                            <div key={order.id} className="bg-white p-6 z-40 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                            <div key={order.id} className="bg-white p-6 z-40 rounded-lg shadow-lg hover:shadow-2xl transition-all ease-in-out duration-150 hover:scale-105">
                                 <h2 className="text-2xl font-semibold mb-3 text-gray-800">{order.productName}</h2>
                                 <p className="text-gray-600 mb-2">Reference: <span className="font-semibold">{order.id}</span></p>
                                 <p className="text-gray-600 mb-2">Shipping: <span className="font-semibold">{order.shippingType}</span></p>
@@ -222,6 +233,9 @@ const AdminHandling = () => {
                                     <option value="Processing">Processing</option>
                                     <option value="Paid">Paid</option>
                                     <option value="Unpaid">Unpaid</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Arrived">Arrived</option>
+
                                 </select>
                                 <p className='text-gray-800 font-semibold mb-3'>Upload real images</p>
                                 <input

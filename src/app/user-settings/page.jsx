@@ -7,20 +7,30 @@ import { AuthContext } from '../context/authContext';
 import { db } from '../config/firebase';
 import withAuth from '../context/withAuth';
 import UpdateUser from '../components/alerts/update-user-profile';
+import LoadingIndicator from '../components/alerts/loading-indicator';
 
 const SettingsPage = () => {
     const { currentUser } = useContext(AuthContext);
     const [firstName, setFirstName] = useState('');
     const [familyName, setFamilyName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [profilePicture, setProfilePicture] = useState(null);
     const [profilePictureUrl, setProfilePictureUrl] = useState('');
     const [updateSuccess, setUpdateSuccess] = useState(false); // State to control the modal
     const storage = getStorage();
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 3000);
+    }, []);
 
     useEffect(() => {
         if (currentUser) {
             setFirstName(currentUser.firstName || '');
             setFamilyName(currentUser.familyName || '');
+            setPhoneNumber(currentUser.phoneNumber || '');
             setProfilePictureUrl(currentUser.profilePicture || '');
         }
     }, [currentUser]);
@@ -44,6 +54,7 @@ const SettingsPage = () => {
         await updateDoc(userRef, {
             firstName,
             familyName,
+            phoneNumber,
             profilePicture: profilePictureUrl,
         });
 
@@ -54,6 +65,10 @@ const SettingsPage = () => {
         setUpdateSuccess(false); // To close the modal
         window.location.href = '/user-dashboard';
     };
+
+    if (isLoading) {
+        return <LoadingIndicator />
+    }
 
     return (
         <div className="max-w-4xl mx-auto mb-10 p-5">
@@ -87,6 +102,21 @@ const SettingsPage = () => {
                         onChange={(e) => setFamilyName(e.target.value)}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                         placeholder="Your family name"
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+                        Phone Number
+                    </label>
+                    <input
+                        type="text"
+                        name="phoneNumber"
+                        id="phoneNumber"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        placeholder="Your phone number"
                     />
                 </div>
 

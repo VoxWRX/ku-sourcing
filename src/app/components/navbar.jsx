@@ -207,7 +207,7 @@ function Navbar() {
                 <a
                   data-aos="fade-up" data-aos-duration="1200"
 
-                  href="https://wa.me/+447466068298?text=Hello%20there!"
+                  href="https://wa.me/+86?text=Hello%20there!"
                   className="-mx-3 text-gray-900 flex justify-between-left space-x-2 rounded-lg px-3 py-2 text-base font-semibold hover:bg-gray-50"
                 >
                   <IoLogoWhatsapp className="text-2xl text-green-600 my-2" />

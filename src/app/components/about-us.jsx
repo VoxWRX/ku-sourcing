@@ -32,6 +32,7 @@ const About = () => {
                         <h4 className="text-lg leading-6 font-medium text-gray-900">Simplified Sourcing</h4>
                         <p className="mt-2 text-base text-gray-500">
                             Our user-friendly web app makes sourcing products easier than ever.
+                            Take the first step towards a world of possibilities!
                         </p>
                     </div>
                 </div>
@@ -47,7 +48,7 @@ const About = () => {
                         <Lottie animationData={AnimationExpertise}
                             loop={true}
                             autoplay={true}
-                            style={{ width: '100%', height: 'auto', maxWidth: '250px' }}
+                            style={{ width: '100%', height: 'auto', maxWidth: '280px' }}
                         />
                     </div>
                 </div>

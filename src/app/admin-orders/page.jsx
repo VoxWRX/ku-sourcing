@@ -9,6 +9,7 @@ import Sidebar from './Sidebar';
 import withAuth from '../context/withAuth';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import LoadingIndicator from '../components/alerts/loading-indicator';
 
 
 const statuses = [
@@ -16,6 +17,9 @@ const statuses = [
     { id: 2, name: 'Processing' },
     { id: 3, name: 'Paid' },
     { id: 4, name: 'Unpaid' },
+    { id: 5, name: 'Shipped' },
+    { id: 6, name: 'Arrived' },
+
 ];
 const services = [
     { id: 1, name: 'Filter by service' },
@@ -37,6 +41,14 @@ const Orders = () => {
     const [selectedOrders, setSelectedOrders] = useState(new Set());
     const [selectedStatus, setSelectedStatus] = useState(statuses[0]);
     const [selectedService, setSelectedService] = useState(services[0]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 3000);
+    }, []);
+
 
 
     useEffect(() => {
@@ -57,6 +69,7 @@ const Orders = () => {
 
         fetchOrders();
     }, []);
+
 
     useEffect(() => {
         let filtered = orders;
@@ -256,6 +269,9 @@ const Orders = () => {
         }
     };
 
+    if (isLoading) {
+        return <LoadingIndicator />;
+    }
 
 
 
@@ -267,11 +283,11 @@ const Orders = () => {
                     <input
                         type="text"
                         placeholder="Search order by reference"
-                        className="input border border-gray-400 appearance-none rounded-lg w-1/4 px-3 text-gray-600"
+                        className="input border border-gray-400 appearance-none rounded-lg w-1/4 px-3 ml-4 text-gray-600"
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
 
-                    <Listbox value={selectedStatus} onChange={setSelectedStatus}>
+                    <Listbox value={selectedStatus} onChange={setSelectedStatus} className="hidden md:block">
                         {({ open }) => (
                             <>
                                 <div className="relative">
@@ -333,7 +349,7 @@ const Orders = () => {
                     </Listbox>
 
 
-                    <Listbox value={selectedService} onChange={setSelectedService}>
+                    <Listbox value={selectedService} onChange={setSelectedService} className="hidden md:block">
                         {({ open }) => (
                             <>
                                 <div className="relative">
@@ -394,13 +410,13 @@ const Orders = () => {
                         )}
                     </Listbox>
                     <button
-                        className=" bg-blue-500 hover:bg-blue-700 text-white py-2 px-6 rounded-lg shadow-md"
+                        className="hidden md:block bg-blue-500 hover:bg-blue-700 text-white py-2 px-6 rounded-lg shadow-md"
                         onClick={handlePrintSelected}
                     >
                         Print Label
                     </button>
                 </div>
-                <div className="bg-white shadow-md rounded-lg overflow-hidden my-6">
+                <div className="bg-white shadow-md rounded-lg overflow-hidden ml-4 my-6">
                     <table className="min-w-full border-collapse block md:table rounded-lg">
                         <thead className="block md:table-header-group">
                             <tr className="md:border md:border-gray-200 md:bg-gray-100 block md:table-row">
@@ -445,8 +461,11 @@ const Orders = () => {
                                             className={classNames(
                                                 'px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full',
                                                 order.status === "Paid" && "bg-green-100 text-green-600",
-                                                order.status === "Processing" && "bg-blue-100 text-blue-600",
+                                                order.status === "Processing" && "bg-orange-100 text-orange-600",
                                                 order.status === "Unpaid" && "bg-red-100 text-red-500",
+                                                order.status === "Shipped" && "bg-gray-100 text-gray-500",
+                                                order.status === "Arrived" && "bg-blue-100 text-blue-500",
+
                                             )}
                                         >
                                             {order.status}

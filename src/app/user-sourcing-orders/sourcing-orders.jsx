@@ -1,7 +1,7 @@
 "use client"
 
 import { FaEllipsisV } from 'react-icons/fa';
-import { TruckIcon, CheckBadgeIcon, ClipboardDocumentListIcon, BanknotesIcon } from '@heroicons/react/20/solid';
+import { TruckIcon, CheckBadgeIcon, ClipboardDocumentListIcon, BanknotesIcon, ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import React, { useState, useEffect, useContext } from 'react';
 import withAuth from '../context/withAuth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -32,13 +32,15 @@ function SourcingOrders() {
     switch (status) {
       case 'Paid':
         return <BanknotesIcon className='h-8 w-10 text-blue-500 justify-center' />;
+      case 'Unpaid':
+        return <ExclamationTriangleIcon className='h-8 w-10 text-red-500 justify-center' />;
       case 'Shipped':
-        return <TruckIcon className='h-8 w-10 text-blue-600 justify-center' />;
+        return <TruckIcon className='h-8 w-10 text-blue-500 justify-center' />;
       case 'Arrived':
-        return <CheckBadgeIcon className='h-8 w-10 text-green-400 justify-center' />;
+        return <CheckBadgeIcon className='h-8 w-10 text-green-500 justify-center' />;
       case 'Processing':
       default:
-        return <ClipboardDocumentListIcon className='h-8 w-10 text-blue-400 justify-center' />;
+        return <ClipboardDocumentListIcon className='h-8 w-10 text-gray-500 justify-center' />;
     }
   }
 
