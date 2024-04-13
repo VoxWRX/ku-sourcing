@@ -145,7 +145,7 @@ const AdminCommentsSection = () => {
 
     return (
         <div className="flex flex-col space-y-4 p-6 mx-auto">
-            <h2 className='text-gray-600 font-bold text-3xl'>Users Chat</h2>
+            <h2 className='text-gray-600 font-bold text-2xl'>Users Chat</h2>
             <div className="space-y-4 max-h-96 overflow-y-auto divide-y divide-gray-200">
                 {comments.map((comment) => (
                     <Comment

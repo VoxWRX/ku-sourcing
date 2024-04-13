@@ -41,8 +41,11 @@ const AdminHandling = () => {
         const fetchOrdersAndCheckQuotations = async () => {
             // Fetch orders from 'product_request_forms' collection
             const querySnapshot = await getDocs(collection(db, 'product_request_forms'));
-            const ordersData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
+            const ordersData = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                productImageUrl: doc.data().productImageUrl || ''
+            }));
 
             // Iterate over each order to check for existing quotations for each destination
             for (const order of ordersData) {
@@ -220,9 +223,15 @@ const AdminHandling = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                         {filteredOrders.map((order, orderIndex) => (
-                            <div key={order.id} className="bg-white p-6 z-40 rounded-lg shadow-lg hover:shadow-2xl transition-all ease-in-out duration-150 hover:scale-105">
+                            <div key={order.id} className="bg-white p-6 z-40 rounded-lg shadow-md  transition-all ease-in-out duration-150 hover:scale-105">
                                 <h2 className="text-2xl font-semibold mb-3 text-gray-800">{order.productName}</h2>
+                                <div className="flex flex-wrap">
+                                    {order.productImageUrl && (
+                                        <img src={order.productImageUrl} alt="Product" className="w-full h-48 object-cover rounded-lg mb-3" />
+                                    )}
+                                </div>
                                 <p className="text-gray-600 mb-2">Reference: <span className="font-semibold">{order.id}</span></p>
+                                <p className="text-gray-600 mb-2">Category: <span className="font-semibold">{order.category}</span></p>
                                 <p className="text-gray-600 mb-2">Shipping: <span className="font-semibold">{order.shippingType}</span></p>
                                 <p className="text-gray-600 mb-4">Status: <span className="font-semibold">{order.status}</span></p>
                                 <select

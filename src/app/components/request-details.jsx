@@ -158,7 +158,7 @@ const Details = ({ status, orderId }) => {
                                   <h3 className="text-lg font-semibold text-gray-900">{`Quotation for ${quotation.destination}`}</h3>
                                   <p className="text-sm font-bold text-gray-700">Unit Price: $ <span className="font-normal">{quotation.unitPrice}</span></p>
                                   <p className="text-sm font-bold text-gray-700">Commission of Service: $ <span className="font-normal">{quotation.commissionOfService}</span></p>
-                                  <p className="text-sm font-bold text-gray-700">Unit Weight: gr <span className="font-normal">{quotation.unitWeight}</span></p>
+                                  <p className="text-sm font-bold text-gray-700">Unit Weight: kg <span className="font-normal">{quotation.unitWeight}</span></p>
                                   <p className="text-sm font-bold text-gray-700">Delivery Cost in China: $ <span className="font-normal">{quotation.deliveryCostInChina}</span></p>
                                   <p className="text-sm font-bold text-gray-700">Total Cost: $ <span className="font-normal">{quotation.totalCost}</span></p>
                                 </div>

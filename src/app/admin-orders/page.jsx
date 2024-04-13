@@ -283,7 +283,7 @@ const Orders = () => {
                     <input
                         type="text"
                         placeholder="Search order by reference"
-                        className="input border border-gray-400 appearance-none rounded-lg w-1/4 px-3 ml-4 text-gray-600"
+                        className="input border-blue-300 appearance-none rounded-lg w-1/4 px-2 ml-4 text-gray-600"
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
 

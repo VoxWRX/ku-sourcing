@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import LineChart from "./admin-dashboard-components/LineChart";
-import ClientsComments from "./admin-dashboard-components/ClientsComments";
 import Header from "./admin-dashboard-components/Header";
 import Sidebar from "./admin-dashboard-components/Sidebar";
 import TopCards from "./admin-dashboard-components/TopCards";
@@ -32,6 +31,7 @@ const AdminDashboard = () => {
           <TopCards />
           <div className="p-4 flex flex-col md:flex-row gap-4">
             <div className="flex-1">
+              <h1 className="text-2xl font-bold mb-4 text-gray-600">In the last 30 days</h1>
               <LineChart />
             </div>
             <div className="w-full md:w-1/3">

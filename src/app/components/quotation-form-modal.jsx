@@ -38,6 +38,7 @@ const QuotationFormModal = ({ order, destinationIndex, quantity, service, onClos
             totalCost: totalCost.toFixed(2),
             orderId: order.id,
             country: destinationCountry,
+            quotationCreationDate: new Date(),
         });
 
         // Marking the quotation as filled for the corresponding destination

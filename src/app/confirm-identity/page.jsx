@@ -72,13 +72,13 @@ const IdentityConfirmation = () => {
 
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-            <div className="w-full max-w-4xl p-10 bg-white rounded-lg shadow-md">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+            <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg">
                 {!isConfirmed && (
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <h2 className="text-3xl font-semibold text-center">Confirm Identity </h2>
-                        <p className="mt-4 mb-8 text-lg text-center leading-8 text-gray-600">Please be sure to enter your full legal name, exactly as it appears on your identification documents</p>
-                        <div className="flex flex-col space-y-1">
+                        <p className="mt-2 mb-6 text-lg text-center leading-relaxed  text-gray-600">Please be sure to enter your full legal name, exactly as it appears on your identification documents</p>
+                        <div className="flex flex-col space-y-2">
                             <label htmlFor="firstName" className="text-sm font-medium">
                                 First Name
                             </label>
@@ -93,7 +93,7 @@ const IdentityConfirmation = () => {
                                 required
                             />
                         </div>
-                        <div className="flex flex-col space-y-1">
+                        <div className="flex flex-col space-y-2">
                             <label htmlFor="familyName" className="text-sm font-medium">
                                 Family Name
                             </label>
@@ -108,7 +108,7 @@ const IdentityConfirmation = () => {
                                 required
                             />
                         </div>
-                        <div className="flex flex-col space-y-1">
+                        <div className="flex flex-col space-y-2">
                             <label htmlFor="phoneNumber" className="text-sm font-medium">
                                 Phone Number
                             </label>
