@@ -20,7 +20,7 @@ const SettingsPage = () => {
     const [updateSuccess, setUpdateSuccess] = useState(false);
     const storage = getStorage();
 
-    const [activeTab, setActiveTab] = useState('profileSettings'); // New state for active tab
+    const [activeTab, setActiveTab] = useState('profileSettings');
 
     const [isLoading, setIsLoading] = useState(true);
 

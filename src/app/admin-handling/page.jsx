@@ -22,6 +22,7 @@ const AdminHandling = () => {
     const [showNotification, setShowNotification] = useState(false);
     const [selectedQuantity, setSelectedQuantity] = useState('');
     const [selectedService, setSelectedService] = useState('');
+    const [quotationsFilled, setQuotationsFilled] = useState({});
     const [filter, setFilter] = useState({
         reference: '',
         status: '',
@@ -33,11 +34,13 @@ const AdminHandling = () => {
     useEffect(() => {
         setTimeout(() => {
             setIsLoading(false);
-        }, 4000);
+        }, 3000);
     }, []);
 
 
     useEffect(() => {
+        setIsLoading(true);
+
         const fetchOrdersAndCheckQuotations = async () => {
             // Fetch orders from 'product_request_forms' collection
             const querySnapshot = await getDocs(collection(db, 'product_request_forms'));
@@ -47,6 +50,14 @@ const AdminHandling = () => {
                 productImageUrl: doc.data().productImageUrl || ''
             }));
 
+            let newQuotationsFilled = {};
+            for (const order of ordersData) {
+                for (const destination of order.destinations || []) {
+                    const key = `${order.id}-${destination.country}`;
+                    const filled = await checkQuotationExists(order.id, destination.country);
+                    newQuotationsFilled[key] = filled;
+                }
+            }
             // Iterate over each order to check for existing quotations for each destination
             for (const order of ordersData) {
                 order.shippingType = order.airFreight ? 'Express Shipping' : 'Normal Shipping';
@@ -62,10 +73,14 @@ const AdminHandling = () => {
                 order.destinationsQuotationFilled = destinationsQuotationFilled;
             }
 
-            // Update the state with the modified orders data
+            // State with the modified orders data
             setOrders(ordersData);
+            setQuotationsFilled(newQuotationsFilled);
+
         };
         fetchOrdersAndCheckQuotations();
+        setIsLoading(false);
+
     }, []);
 
     const handleStatusChange = async (orderId, newStatus) => {
@@ -83,11 +98,9 @@ const AdminHandling = () => {
             const snapshot = await uploadBytes(storageRef, file);
             const downloadURL = await getDownloadURL(snapshot.ref);
 
-            // Update Firestore document
             const orderRef = doc(db, 'product_request_forms', orderId);
             await updateDoc(orderRef, { realImages: arrayUnion(downloadURL) });
 
-            // Update the orders state
             setOrders(orders.map(order => {
                 if (order.id === orderId) {
                     return {
@@ -123,36 +136,27 @@ const AdminHandling = () => {
     };
 
 
-    const openQuotationModal = (orderIndex, destinationIndex) => {
-        setSelectedOrder(orderIndex);
-        setSelectedDestinationIndex(destinationIndex);
-        const order = orders[orderIndex];
-        setSelectedQuantity(order.destinations[destinationIndex].quantity);
-        setSelectedService(order.destinations[destinationIndex].service);
-        setShowQuotationModal(true);
-    };
-
-
-    // When saving a quotation, update the filled status for the correct destination
-    const handleSaveQuotation = (updatedOrder, destinationIndex) => {
-        const updatedOrders = orders.map(order => {
-            if (order.id === updatedOrder.id) {
-                const updatedDestinationsQuotationFilled = [...order.destinationsQuotationFilled];
-                // Here to mark the quotation as filled for the destination
-                updatedDestinationsQuotationFilled[destinationIndex] = true;
-                return { ...updatedOrder, destinationsQuotationFilled: updatedDestinationsQuotationFilled };
-            }
-            return order;
-        });
+    const handleSaveQuotation = (updatedOrder) => {
+        const updatedOrders = orders.map(order =>
+            order.id === updatedOrder.id ? updatedOrder : order
+        );
         setOrders(updatedOrders);
+
+        // Updating quotationsFilled state to disable the button for the filled destination
+        const destinationCountry = updatedOrder.destinations[selectedDestinationIndex].country;
+        const key = `${updatedOrder.id}-${destinationCountry}`;
+        setQuotationsFilled(prev => ({ ...prev, [key]: true }));
+
         setShowQuotationModal(false);
+        handleShowNotification();
     };
 
 
     const checkQuotationExists = async (orderId, country) => {
         const quotationRef = collection(db, "quotation");
-        const querySnapshot = await getDocs(query(quotationRef, where("orderId", "==", orderId), where("country", "==", country)));
-        return !querySnapshot.empty;
+        const q = query(quotationRef, where("orderId", "==", orderId), where("country", "==", country));
+        const snapshot = await getDocs(q);
+        return !snapshot.empty;
     };
 
     const handleShowNotification = () => {
@@ -234,6 +238,11 @@ const AdminHandling = () => {
                                 <p className="text-gray-600 mb-2">Category: <span className="font-semibold">{order.category}</span></p>
                                 <p className="text-gray-600 mb-2">Shipping: <span className="font-semibold">{order.shippingType}</span></p>
                                 <p className="text-gray-600 mb-4">Status: <span className="font-semibold">{order.status}</span></p>
+                                {order.additionalNotes && (
+                                    <p className="text-gray-600 mb-4">
+                                        Notes: <span className="font-semibold">{order.additionalNotes}</span>
+                                    </p>
+                                )}
                                 <select
                                     className="block w-full p-3 border-gray-300 rounded-md shadow-sm mb-4 text-gray-700 focus:ring-blue-500 focus:border-blue-500"
                                     value={order.status}
@@ -268,14 +277,19 @@ const AdminHandling = () => {
                                 </div>
 
                                 {order.destinations?.map((destination, index) => {
-                                    const isQuotationFilled = order.destinationsQuotationFilled[index];
+                                    const key = `${order.id}-${destination.country}`;
+                                    const isQuotationFilled = quotationsFilled[key];
                                     return (
                                         <button
-                                            key={`${order.id}-${index}`}
-                                            className={`mt-2 mb-2 p-2 w-full rounded-lg text-white transition-colors ${isQuotationFilled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                                            key={key}
+                                            className={`mt-2 mb-2 p-2 w-full rounded-lg text-white ${isQuotationFilled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                                             onClick={() => {
                                                 if (!isQuotationFilled) {
-                                                    openQuotationModal(orderIndex, index);
+                                                    setSelectedOrder(order);
+                                                    setSelectedDestinationIndex(index);
+                                                    setSelectedQuantity(destination.quantity);
+                                                    setSelectedService(destination.service);
+                                                    setShowQuotationModal(true);
                                                 }
                                             }}
                                             disabled={isQuotationFilled}
@@ -290,18 +304,12 @@ const AdminHandling = () => {
 
                     {showQuotationModal && selectedOrder !== null && (
                         <QuotationFormModal
-                            order={orders[selectedOrder]}
+                            order={selectedOrder}
                             destinationIndex={selectedDestinationIndex}
                             quantity={selectedQuantity} // Passing the selected quantity as a prop
                             service={selectedService} // Passing the selected service as a prop
                             onClose={() => setShowQuotationModal(false)}
-                            onSave={() => {
-                                const updatedOrders = [...orders];
-                                updatedOrders[selectedOrder].destinationsQuotationFilled[selectedDestinationIndex] = true;
-                                setOrders(updatedOrders);
-                                setShowQuotationModal(false);
-                                handleShowNotification();
-                            }}
+                            onSave={handleSaveQuotation}
                         />
                     )}
                 </div>

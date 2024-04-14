@@ -13,7 +13,7 @@ import { BsBank2 } from "react-icons/bs";
 import { AuthContext } from '../context/authContext';
 import { db, storage } from '../config/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 
 
 function Payments() {
@@ -23,6 +23,8 @@ function Payments() {
   const [selectedBank, setSelectedBank] = useState({ name: '', details: [] });
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [unpaidOrders, setUnpaidOrders] = useState([]);
+  const [selectedOrders, setSelectedOrders] = useState({});  // Stores which orders are checked
 
   const bankDetails = {
     'Transfer Wise': [
@@ -57,6 +59,50 @@ function Payments() {
     }, 3000);
   }, []);
 
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    const fetchUnpaidOrders = async () => {
+      setIsLoading(true);
+
+      // Query to get unpaid orders from "product_request_forms"
+      const q = query(collection(db, "product_request_forms"),
+        where("status", "==", "Unpaid"),
+        where("userId", "==", currentUser.uid));
+      const querySnapshot = await getDocs(q);
+      const ordersWithTotalCost = await Promise.all(querySnapshot.docs.map(async (docSnapshot) => {
+        const orderId = docSnapshot.id;
+
+        const quotationQuery = query(collection(db, "quotation"), where("orderId", "==", orderId));
+        const quotationSnapshots = await getDocs(quotationQuery);
+
+        if (!quotationSnapshots.empty) {
+          let totalCost = 0; // Initialize total cost for this order
+          quotationSnapshots.docs.forEach(doc => {
+            const quotationData = doc.data();
+            // Ensure totalCost is treated as a number
+            const cost = parseFloat(quotationData.totalCost);
+            if (!isNaN(cost)) {
+              totalCost += cost; // Sum up the totalCost from each quotation
+            }
+          });
+
+          // Return the summed total cost as a string formatted to two decimal places
+          return { orderId, totalCost: totalCost.toFixed(2) };
+        } else {
+          console.log(`No quotation found for order ID: ${orderId}`); // Log for debugging
+          return { orderId, totalCost: "No quotation found" };
+        }
+      }));
+
+      setUnpaidOrders(ordersWithTotalCost);
+      setIsLoading(false);
+    };
+
+    fetchUnpaidOrders();
+  }, [currentUser.uid]);
+
   const openModal = (bank) => {
     setSelectedBank({ name: bank, details: bankDetails[bank] });
     setIsOpen(true);
@@ -65,6 +111,15 @@ function Payments() {
   const closeModal = () => {
     setIsOpen(false);
   }
+
+  const handleCheckboxChange = (orderId) => {
+    setSelectedOrders(prev => ({
+      ...prev,
+      [orderId]: !prev[orderId]
+    }));
+  };
+
+  const anyOrderSelected = Object.values(selectedOrders).some(isSelected => isSelected);
 
 
 
@@ -75,23 +130,45 @@ function Payments() {
     }
   };
 
+
   const uploadFile = async () => {
-    if (!file) return;
+    if (!file || !anyOrderSelected || uploading) return;
+
     setUploading(true);
     const fileRef = ref(storage, `proofOfPayment/${currentUser.uid}/${file.name}`);
-    await uploadBytes(fileRef, file);
-    const fileUrl = await getDownloadURL(fileRef);
+    try {
+      await uploadBytes(fileRef, file);
+      const fileUrl = await getDownloadURL(fileRef);
 
-    // Save the file URL and the user ID to Firestore
-    await setDoc(doc(db, "proofOfPayment", currentUser.uid), {
-      url: fileUrl,
-      userId: currentUser.uid
-    });
+      // Iterate over selected orders and save proof of payment for each
+      const updates = Object.entries(selectedOrders).filter(([_, isSelected]) => isSelected).map(async ([orderId]) => {
+        // Save the file URL, user ID, and orderId to Firestore in a general collection
+        const proofDocRef = doc(db, "proofOfPayment", currentUser.uid, "orders", orderId); // Use a subcollection for orders
+        await setDoc(proofDocRef, {
+          url: fileUrl,
+          userId: currentUser.uid,
+          orderId: orderId
+        });
 
-    setUploading(false);
-    alert('File uploaded successfully!');
-    setFile(null);
+        // Update each selected order to mark proof of payment as uploaded
+        const orderRef = doc(db, "product_request_forms", orderId);
+        return setDoc(orderRef, { proofUploaded: true }, { merge: true });
+      });
+
+      await Promise.all(updates);
+
+      alert('File uploaded and records updated successfully!');
+    } catch (error) {
+      console.error("Error uploading file and updating records: ", error);
+      alert('Failed to upload file and update records.');
+    } finally {
+      setUploading(false);
+      setFile(null);
+      // Optionally reset selectedOrders
+      setSelectedOrders({});
+    }
   };
+
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -170,34 +247,56 @@ function Payments() {
             </div>
           </Dialog>
         </Transition>
+
+        <div className="max-w-4xl mx-auto py-8 px-6 ">
+          <h1 className="text-xl font-semibold text-gray-700 mb-4">Unpaid Orders</h1>
+          {unpaidOrders.length > 0 ? (
+            <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
+              <ul className="divide-y divide-gray-200">
+                {unpaidOrders.map(order => (
+                  <li key={order.orderId} className="px-6 py-4 bg-gray-50 flex justify-between items-center">
+                    <div>
+                      <input
+                        type="checkbox"
+                        checked={!!selectedOrders[order.orderId]}
+                        onChange={() => handleCheckboxChange(order.orderId)}
+                        className="mr-4 rounded"
+                      />
+                      <span className="font-medium text-gray-900">Order ID: {order.orderId}</span>
+                    </div>
+                    <span className="text-blue-600 font-semibold">Total Cost: ${order.totalCost}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <div className="text-center py-6">
+              <span className="text-gray-500 font-medium">No unpaid orders found.</span>
+            </div>
+          )}
+        </div>
+
         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-semibold leading-6 text-gray-900">Proof of Payment</dt>
+          <dt className="text-lg font-semibold leading-6 mt-5 ml-2 text-gray-900">Proof of Payment</dt>
           <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
             <div className="bg-white rounded-md border border-gray-200 shadow-sm">
-              <div className="px-4 py-5 sm:p-6">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <LinkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                  </div>
-                  <div className="flex-shrink-0 flex space-x-3">
-                    <label className="cursor-pointer rounded-md bg-slate-100 text-gray-700 shadow-sm hover:bg-gray-100 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 p-2">
-                      <span>{file ? file.name : 'Choose File'}</span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        onChange={handleFileChange}
-                        accept=".jpg, .jpeg, .png, .pdf, .doc, .docx"
-                      />
-                    </label>
-                    <button
-                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={uploadFile}
-                      disabled={uploading || !file}
-                    >
-                      Upload
-                    </button>
-                  </div>
-                </div>
+              <div className="px-4 py-5 sm:p-6 flex justify-between items-center">
+                <label className="cursor-pointer rounded-md bg-slate-100 text-gray-700 shadow-sm hover:bg-gray-100 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 p-2">
+                  <span>{file ? file.name : 'Choose File'}</span>
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={handleFileChange}
+                    accept=".jpg, .jpeg, .png, .pdf, .doc, .docx"
+                  />
+                </label>
+                <button
+                  className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white ${anyOrderSelected && file ? 'bg-blue-500 hover:bg-blue-600 focus:ring-blue-500' : 'bg-gray-300 cursor-not-allowed'}`}
+                  onClick={uploadFile}
+                  disabled={!anyOrderSelected || !file || uploading}
+                >
+                  Upload
+                </button>
               </div>
             </div>
           </dd>

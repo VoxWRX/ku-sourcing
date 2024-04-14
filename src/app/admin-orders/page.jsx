@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, Fragment } from 'react';
-import { collection, getDoc, getDocs, doc } from 'firebase/firestore';
+import { collection, getDoc, getDocs, doc, where, query } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
@@ -10,6 +10,8 @@ import withAuth from '../context/withAuth';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import LoadingIndicator from '../components/alerts/loading-indicator';
+import { faFileDownload, faFileImage, faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 const statuses = [
@@ -49,26 +51,65 @@ const Orders = () => {
         }, 3000);
     }, []);
 
-
-
     useEffect(() => {
         const fetchOrders = async () => {
-            const querySnapshot = await getDocs(collection(db, "product_request_forms"));
+            setIsLoading(true);
+            const ordersRef = collection(db, "product_request_forms");
+            const querySnapshot = await getDocs(ordersRef);
             const fetchedOrders = [];
+
             for (let doc of querySnapshot.docs) {
                 const orderData = doc.data();
                 const userData = await fetchUserData(orderData.userId);
+
+                let proofFiles = []; // Array to store file components or download links
+
+                if (orderData.proofUploaded) {
+                    // Fetch proof from the new structure
+                    const proofRef = collection(db, "proofOfPayment", orderData.userId, "orders");
+                    const proofsQuery = query(proofRef, where("orderId", "==", doc.id));
+                    const proofsSnapshot = await getDocs(proofsQuery);
+
+                    proofsSnapshot.forEach(proofDoc => {
+                        const fileData = proofDoc.data();
+                        if (fileData.url) {
+                            // Check if the file is an image
+                            if (fileData.url.match(/\.(jpeg|jpg|gif|png)$/)) {
+                                proofFiles.push(
+                                    <a href={fileData.url} target="_blank" rel="noopener noreferrer" title="View Image">
+                                        <FontAwesomeIcon icon={faFileImage} className="text-blue-500 mx-1" size='2x' /> View Image
+                                    </a>
+                                );
+                            } else {
+                                // For non-image files, create a download link with an icon
+                                proofFiles.push(
+                                    <a href={fileData.url} download title="Download File">
+                                        <FontAwesomeIcon icon={faFileDownload} className="text-blue-500 mx-1" size='2x' /> View File
+                                    </a>
+                                );
+                            }
+                        }
+                    });
+                } else {
+                    proofFiles.push("No proof uploaded");
+                }
+
                 fetchedOrders.push({
                     id: doc.id,
                     userEmail: userData?.email,
+                    proofOfPayment: proofFiles,
                     ...orderData,
                 });
-
-            } setOrders(fetchedOrders);
+            }
+            setOrders(fetchedOrders);
+            setIsLoading(false);
         };
 
         fetchOrders();
+
     }, []);
+
+
 
 
     useEffect(() => {
@@ -438,6 +479,8 @@ const Orders = () => {
                                 <th className="text-left md:border md:border-gray-200 px-4 py-2 block md:table-cell">Status</th>
                                 <th className="text-left md:border md:border-gray-200 px-4 py-2 block md:table-cell">Product Name</th>
                                 <th className="px-4 py-2 block md:table-cell">Destinations</th>
+                                <th className="px-4 py-2 block md:table-cell">Proof of Payment</th>
+
                             </tr>
                         </thead>
                         <tbody className="block md:table-row-group">
@@ -482,6 +525,11 @@ const Orders = () => {
                                                 <div>Quantity: {dest.quantity}</div>
                                                 <div>Service: {dest.service}</div>
                                             </div>
+                                        ))}
+                                    </td>
+                                    <td className="px-4 py-2 block md:table-cell">
+                                        {order.proofOfPayment.map((fileComponent, index) => (
+                                            <div key={index}>{fileComponent}</div>
                                         ))}
                                     </td>
                                 </tr>

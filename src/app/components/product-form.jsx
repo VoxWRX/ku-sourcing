@@ -132,6 +132,7 @@ export default function SourcingRequestForm() {
         formCreationDate: Timestamp.fromDate(formData.formCreationDate), // Convert to Timestamp here for firebase format
         productImageUrl: fileUrl,
         destinations: destinations,
+        proofUploaded: false,
       });
 
       setShowNotification(true);
