@@ -40,7 +40,9 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      <div className='ml-8'>
+        <Footer />
+      </div>
     </>
   );
 };

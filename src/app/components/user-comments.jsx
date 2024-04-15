@@ -9,6 +9,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { AuthContext } from '../context/authContext';
+import { IoIosChatbubbles } from "react-icons/io";
 
 const CommentsSection = () => {
     const [comments, setComments] = useState([]);
@@ -62,7 +63,7 @@ const CommentsSection = () => {
 
     return (
         <div className="flex flex-col space-y-4 p-6 mx-auto">
-            <h2 className='text-gray-600 font-bold text-3xl'>Admin Chat</h2>
+            <h2 className='text-gray-600 font-bold flex text-3xl'>Admin Chat <IoIosChatbubbles className="ml-4" /> </h2>
             {currentUser && (
                 <div className="space-y-4 max-h-96 overflow-y-auto divide-y divide-gray-200">
                     {comments.map((comment) => (

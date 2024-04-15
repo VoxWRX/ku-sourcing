@@ -1,13 +1,13 @@
 "use client"
 
-import { FaEllipsisV } from 'react-icons/fa';
-import { TruckIcon, CheckBadgeIcon, ClipboardDocumentListIcon, BanknotesIcon, ExclamationTriangleIcon } from '@heroicons/react/20/solid';
+import { TruckIcon, CheckBadgeIcon, ClipboardDocumentListIcon, ExclamationTriangleIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
 import React, { useState, useEffect, useContext } from 'react';
 import withAuth from '../context/withAuth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { AuthContext } from '../context/authContext';
 import { format } from 'date-fns';
+import { CiBookmarkCheck } from "react-icons/ci";
 
 
 function SourcingOrders() {
@@ -31,7 +31,7 @@ function SourcingOrders() {
   function getStatusIcon(status) {
     switch (status) {
       case 'Paid':
-        return <BanknotesIcon className='h-8 w-10 text-blue-500 justify-center' />;
+        return <HandThumbUpIcon className='h-8 w-10 text-blue-500 justify-center' />;
       case 'Unpaid':
         return <ExclamationTriangleIcon className='h-8 w-10 text-red-500 justify-center' />;
       case 'Shipped':

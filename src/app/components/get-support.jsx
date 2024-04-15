@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
+import emailjs from 'emailjs-com';
 
 
 const ContactForm = () => {
@@ -12,8 +13,30 @@ const ContactForm = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Handle the form submission later
-        alert('Form submitted'); // Replace with submission notification later
+        const serviceId = process.env.NEXT_PUBLIC_SERVICE_ID;
+        const templateId = process.env.NEXT_PUBLIC_TEMPLATE_ID;
+        const userId = process.env.NEXT_PUBLIC_USER_ID;
+
+        const templateParams = {
+            sendername: name,
+            replyto: email,
+            subject: subject,
+            message: message,
+        };
+
+        emailjs.send(serviceId, templateId, templateParams, userId)
+            .then((result) => {
+                alert('Message Sent, We will get back to you shortly', result.text);
+            }, (error) => {
+                alert('An error occurred, Please try again', error.text);
+            });
+
+        // Reset form fields
+        setName('');
+        setEmail('');
+        setSubject('');
+        setMessage('');
+
     };
 
     return (

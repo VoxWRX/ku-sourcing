@@ -7,7 +7,7 @@ const World = dynamic(() => import("./ui/globe").then((m) => m.World), {
   ssr: false,
 });
 
-export function GlobeWorld() {
+export function GlobeWorld({ onComplete }) {
   const globeConfig = {
     pointSize: 4,
     globeColor: "#062056",
@@ -409,14 +409,15 @@ export function GlobeWorld() {
           transition={{
             duration: 1,
           }}
+          onAnimationComplete={() => onComplete()}
           className="div"
         >
           <h2 className="text-center  mx-6 text-5xl md:text-6xl font-bold text-black dark:text-white">
-          Smarter Sourcing Solutions
+            Smarter Sourcing Solutions
           </h2>
           <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-2xl py-6 mx-auto">
-          We take the complexity out of finding the right suppliers for your needs, 
-          saving you time and money and giving you complete control over your supply chain.
+            We take the complexity out of finding the right suppliers for your needs,
+            saving you time and money and giving you complete control over your supply chain.
           </p>
         </motion.div>
         <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-slate-100 z-40" />

@@ -1,7 +1,18 @@
-import React from "react";
+"use client"
+
+import React, { useEffect } from "react";
 import { SparklesCore } from "./sparkles";
 
-export function SparklesBlack() {
+export function SparklesBlack({ onComplete }) {
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onComplete(); // Notify completion after 3000ms
+    }, 3000);
+    return () => clearTimeout(timer); // Clean up on component unmount
+  }, [onComplete]);
+
+
   return (
     <div className="h-[20rem] w-full bg-transparent pt-4 flex flex-col items-center justify-center overflow-hidden rounded-md">
       <h1 className="md:text-6xl text-5xl lg:text-7xl font-bold text-center text-black relative z-10" style={{ background: '-webkit-linear-gradient(left, #60a5fa, #2563eb, #60a5fa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -25,7 +36,7 @@ export function SparklesBlack() {
         />
 
         {/* Radial Gradient to prevent sharp edges */}
-        <div className="absolute inset-0 w-full h-full bg-gray-100" style={{ maskImage: 'radial-gradient(ellipse at top, rgba(0,0,0,0) 20%, rgba(0,0,0,1) 100%)' }}></div>
+        <div className="absolute inset-0 w-full h-full bg-gray-50" style={{ maskImage: 'radial-gradient(ellipse at top, rgba(0,0,0,0) 20%, rgba(0,0,0,1) 100%)' }}></div>
       </div>
     </div>
   );

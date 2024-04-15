@@ -10,7 +10,7 @@ import BackgroundBeams from '../components/ui/backgound-beams';
 import Sidebar from './Sidebar';
 import withAuth from '../context/withAuth';
 import LoadingIndicator from '../components/alerts/loading-indicator';
-
+import QuotationSuccess from '../components/alerts/quotation-filled-success';
 
 
 
@@ -23,6 +23,7 @@ const AdminHandling = () => {
     const [selectedQuantity, setSelectedQuantity] = useState('');
     const [selectedService, setSelectedService] = useState('');
     const [quotationsFilled, setQuotationsFilled] = useState({});
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [filter, setFilter] = useState({
         reference: '',
         status: '',
@@ -148,9 +149,8 @@ const AdminHandling = () => {
         setQuotationsFilled(prev => ({ ...prev, [key]: true }));
 
         setShowQuotationModal(false);
-        handleShowNotification();
+        setShowSuccessModal(true);
     };
-
 
     const checkQuotationExists = async (orderId, country) => {
         const quotationRef = collection(db, "quotation");
@@ -159,16 +159,10 @@ const AdminHandling = () => {
         return !snapshot.empty;
     };
 
-    const handleShowNotification = () => {
-        setShowNotification(true);
-        setTimeout(() => setShowNotification(false), 3000);
-    };
-
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilter(prev => ({ ...prev, [name]: value }));
     };
-
 
     const filteredOrders = orders.filter((order) => {
         return (
@@ -190,11 +184,6 @@ const AdminHandling = () => {
                 <BackgroundBeams className="fixed top-0 left-0 h-full w-full" />
                 <div className="relative max-w-6xl mx-auto  px-6 py-8">
 
-                    {showNotification && (
-                        <div className="absolute bottom-0 right-0 mb-4 mr-4 z-50 bg-blue-100 border border-blue-400 text-blue-700 px-6 py-4 rounded-lg">
-                            <p className='font-semibold text-lg'>Quotation submitted successfully!</p>
-                        </div>
-                    )}
                     <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Admin Handling</h1>
                     <p className="mt-6 text-lg mb-10 leading-8 text-gray-600 text-center">Update each order status, fill quotations and upload real images.</p>
                     <div className="flex gap-4 mb-6">
@@ -301,7 +290,9 @@ const AdminHandling = () => {
                             </div>
                         ))}
                     </div>
-
+                    {showSuccessModal && (
+                        <QuotationSuccess open={showSuccessModal} setOpen={setShowSuccessModal} />
+                    )}
                     {showQuotationModal && selectedOrder !== null && (
                         <QuotationFormModal
                             order={selectedOrder}

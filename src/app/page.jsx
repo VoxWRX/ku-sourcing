@@ -13,12 +13,29 @@ import LoadingIndicator from "./components/alerts/loading-indicator";
 
 function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const [animationComplete, setAnimationComplete] = useState({
+    sparklesBlack: false,
+    globeWorld: false,
+  });
+
+  // Check if all animations are complete
+  useEffect(() => {
+    const allAnimationsComplete = Object.values(animationComplete).every(status => status);
+    if (allAnimationsComplete) {
+      setIsLoading(false);
+    }
+  }, [animationComplete]);
+
+  // Callback to handle animation completion
+  const handleAnimationComplete = (component) => {
+    setAnimationComplete(prev => ({ ...prev, [component]: true }));
+  };
 
   useEffect(() => {
     const loadData = async () => {
       setTimeout(() => {
         setIsLoading(false);
-      }, 3000);
+      }, 2000);
     };
 
     loadData();
@@ -37,10 +54,12 @@ function Home() {
         </a>
 
         <div className="text-sm pt-8">
-          <SparklesBlack />
-          <GlobeWorld />
+          <SparklesBlack onComplete={() => handleAnimationComplete('sparklesBlack')} />
+          <GlobeWorld onComplete={() => handleAnimationComplete('globeWorld')} />
           <Subtitle />
-          <Steps />
+          <div className="mb-8 mt-4">
+            <Steps />
+          </div>
           <About />
           <Testemonials />
           <ContactForm />

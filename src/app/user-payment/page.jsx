@@ -13,7 +13,8 @@ import { BsBank2 } from "react-icons/bs";
 import { AuthContext } from '../context/authContext';
 import { db, storage } from '../config/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import ProofPayment from '../components/alerts/proof-payment-success';
 
 
 function Payments() {
@@ -25,6 +26,7 @@ function Payments() {
   const [uploading, setUploading] = useState(false);
   const [unpaidOrders, setUnpaidOrders] = useState([]);
   const [selectedOrders, setSelectedOrders] = useState({});  // Stores which orders are checked
+  const [isProofModalOpen, setIsProofModalOpen] = useState(false);
 
   const bankDetails = {
     'Transfer Wise': [
@@ -157,16 +159,19 @@ function Payments() {
 
       await Promise.all(updates);
 
-      alert('File uploaded and records updated successfully!');
+      setIsProofModalOpen(true); // The proof of payment modal
     } catch (error) {
       console.error("Error uploading file and updating records: ", error);
       alert('Failed to upload file and update records.');
     } finally {
       setUploading(false);
-      setFile(null);
-      // Optionally reset selectedOrders
-      setSelectedOrders({});
     }
+  };
+  const closeProofModal = () => {
+    setIsProofModalOpen(false);
+    // Reset other relevant states here
+    setSelectedOrders({});
+    setFile(null);
   };
 
 
@@ -303,6 +308,8 @@ function Payments() {
         </div>
 
       </div>
+      <ProofPayment open={isProofModalOpen} setOpen={closeProofModal} />
+
       <Footer />
     </>
   )
