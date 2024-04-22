@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState, useEffect, Fragment } from 'react';
-import { collection, getDoc, getDocs, doc, where, query } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { collection, getDoc, getDocs, doc, where, query, setDoc, updateDoc } from 'firebase/firestore';
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../config/firebase';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import Sidebar from './Sidebar';
@@ -10,8 +11,9 @@ import withAuth from '../context/withAuth';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import LoadingIndicator from '../components/alerts/loading-indicator';
-import { faFileDownload, faFileImage, faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import { faFileDownload, faFileImage, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { arrayUnion } from 'firebase/firestore';
 
 
 const statuses = [
@@ -51,65 +53,99 @@ const Orders = () => {
         }, 3000);
     }, []);
 
-    useEffect(() => {
-        const fetchOrders = async () => {
-            setIsLoading(true);
+
+    const fetchOrders = async () => {
+        setIsLoading(true);
+        try {
             const ordersRef = collection(db, "product_request_forms");
             const querySnapshot = await getDocs(ordersRef);
-            const fetchedOrders = [];
-
-            for (let doc of querySnapshot.docs) {
+            const fetchedOrders = await Promise.all(querySnapshot.docs.map(async (doc) => {
                 const orderData = doc.data();
+                const orderId = doc.id;
+
+                // Fetch user data
                 const userData = await fetchUserData(orderData.userId);
 
-                let proofFiles = []; // Array to store file components or download links
+                // Fetch delivery proofs
+                const deliveryProofQuery = query(collection(db, "orderDeliveryProof"), where("orderId", "==", orderId));
+                const deliveryProofsSnapshot = await getDocs(deliveryProofQuery);
+                const urls = deliveryProofsSnapshot.docs.flatMap(proofDoc => proofDoc.data().urls || []);
 
+                // Fetch proof of payment
+                let proofFiles = [];
                 if (orderData.proofUploaded) {
-                    // Fetch proof from the new structure
                     const proofRef = collection(db, "proofOfPayment", orderData.userId, "orders");
-                    const proofsQuery = query(proofRef, where("orderId", "==", doc.id));
+                    const proofsQuery = query(proofRef, where("orderId", "==", orderId));
                     const proofsSnapshot = await getDocs(proofsQuery);
-
                     proofsSnapshot.forEach(proofDoc => {
                         const fileData = proofDoc.data();
-                        if (fileData.url) {
-                            // Check if the file is an image
-                            if (fileData.url.match(/\.(jpeg|jpg|gif|png)$/)) {
-                                proofFiles.push(
-                                    <a href={fileData.url} target="_blank" rel="noopener noreferrer" title="View Image">
-                                        <FontAwesomeIcon icon={faFileImage} className="text-blue-500 mx-1" size='2x' /> View Image
-                                    </a>
-                                );
-                            } else {
-                                // For non-image files, create a download link with an icon
-                                proofFiles.push(
-                                    <a href={fileData.url} download title="Download File">
-                                        <FontAwesomeIcon icon={faFileDownload} className="text-blue-500 mx-1" size='2x' /> View File
-                                    </a>
-                                );
-                            }
-                        }
+                        proofFiles.push(
+                            fileData.url.match(/\.(jpeg|jpg|gif|png)$/) ?
+                                <a href={fileData.url} target="_blank" rel="noopener noreferrer" title="View Image">
+                                    <FontAwesomeIcon icon={faFileImage} className="text-blue-500 mx-1" size='2x' /> View Image
+                                </a> :
+                                <a href={fileData.url} target="_blank" title="Download File">
+                                    <FontAwesomeIcon icon={faFileDownload} className="text-blue-500 mx-1" size='2x' /> View File
+                                </a>
+                        );
                     });
                 } else {
                     proofFiles.push("No proof uploaded");
                 }
 
-                fetchedOrders.push({
-                    id: doc.id,
+                return {
+                    id: orderId,
                     userEmail: userData?.email,
                     proofOfPayment: proofFiles,
-                    ...orderData,
-                });
-            }
+                    urls,
+                    ...orderData
+                };
+            }));
+
+            fetchedOrders.sort((a, b) => (b.formCreationDate.seconds - a.formCreationDate.seconds));
             setOrders(fetchedOrders);
-            setIsLoading(false);
-        };
+        } catch (error) {
+            console.error("Failed to fetch orders:", error);
+        }
+        setIsLoading(false);
+    };
 
+    useEffect(() => {
         fetchOrders();
-
     }, []);
 
 
+    const uploadDeliveryProof = async (files, orderId) => {
+        if (!files.length) return;
+
+        setIsLoading(true);
+        const orderProofRef = doc(db, "orderDeliveryProof", orderId);
+
+        try {
+            const newProofs = [];
+            for (const file of files) {
+                const fileRef = storageRef(storage, `orderDeliveryProof/${orderId}/${file.name}`);
+                const uploadResult = await uploadBytes(fileRef, file);
+                const downloadURL = await getDownloadURL(uploadResult.ref);
+                newProofs.push(downloadURL);
+            }
+
+            const docSnapshot = await getDoc(orderProofRef);
+            if (!docSnapshot.exists()) {
+                await setDoc(orderProofRef, { urls: newProofs, orderId: orderId });
+            } else {
+                await updateDoc(orderProofRef, {
+                    urls: arrayUnion(...newProofs)
+                });
+            }
+
+            await fetchOrders();
+        } catch (error) {
+            console.error("Failed to upload delivery proofs:", error);
+        }
+
+        setIsLoading(false);
+    };
 
 
     useEffect(() => {
@@ -239,7 +275,7 @@ const Orders = () => {
             }
 
             const userData = await fetchUserData(orderToPrint.userId);
-            const shippingType = orderToPrint.airFreight ? 'Express Shipping' : 'Normal Shipping';
+            const shippingType = orderToPrint.airFreight ? 'Express Delivery' : 'Normal Delivery';
             const orderDate = formatDate(orderToPrint.formCreationDate);
 
             let startY = 20 + logoHeight + 5;
@@ -319,7 +355,7 @@ const Orders = () => {
     return (
         <>
             <Sidebar />
-            <div className="container mx-auto p-6">
+            <div className=" ml-14 mx-auto p-4">
                 <div className="flex justify-between mb-4">
                     <input
                         type="text"
@@ -458,7 +494,7 @@ const Orders = () => {
                     </button>
                 </div>
                 <div className="bg-white shadow-md rounded-lg overflow-hidden ml-4 my-6">
-                    <table className="min-w-full border-collapse block md:table rounded-lg">
+                    <table className=" border-collapse block md:table rounded-lg">
                         <thead className="block md:table-header-group">
                             <tr className="md:border md:border-gray-200 md:bg-gray-100 block md:table-row">
                                 <th className="px-4 py-2 block md:table-cell">
@@ -480,6 +516,8 @@ const Orders = () => {
                                 <th className="text-left md:border md:border-gray-200 px-4 py-2 block md:table-cell">Product Name</th>
                                 <th className="px-4 py-2 block md:table-cell">Destinations</th>
                                 <th className="px-4 py-2 block md:table-cell">Proof of Payment</th>
+                                <th className="px-4 py-2 block md:table-cell">Delivery Package</th>
+                                <th className="px-4 py-2 block md:table-cell">Upload</th>
 
                             </tr>
                         </thead>
@@ -531,6 +569,25 @@ const Orders = () => {
                                         {order.proofOfPayment.map((fileComponent, index) => (
                                             <div key={index}>{fileComponent}</div>
                                         ))}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <div class="flex justify-center items-center flex-wrap">
+                                            {order.urls && order.urls.length > 0 ? (
+                                                order.urls.map((url, index) => (
+                                                    <a key={index} href={url} target="_blank" rel="noopener noreferrer" title={`View Proof ${index + 1}`} className="mr-2">
+                                                        <img src={url} alt={`Delivery Proof ${index + 1}`} className="w-12 h-12 object-cover rounded" />
+                                                    </a>
+                                                ))
+                                            ) : <span>Not yet uploaded</span>}
+                                        </div>
+                                    </td>
+
+
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <label className="cursor-pointer flex justify-center items-center">
+                                            <FontAwesomeIcon icon={faUpload} className="text-blue-500" size={30} />
+                                            <input type="file" multiple className="hidden" onChange={(e) => uploadDeliveryProof(e.target.files, order.id)} />
+                                        </label>
                                     </td>
                                 </tr>
                             ))}

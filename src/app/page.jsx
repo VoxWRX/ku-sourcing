@@ -10,6 +10,7 @@ import About from "./components/about-us";
 import Testemonials from "./components/testemonials";
 import { useEffect, useState } from "react";
 import LoadingIndicator from "./components/alerts/loading-indicator";
+import TranslateComponent from "./components/translate-comp";
 
 function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -49,7 +50,7 @@ function Home() {
       <div className="relative w-full">
         <a href="/login"
           className="absolute right-4 top-4 px-4 py-2  text-blue-500 font-semibold rounded-xl hover:bg-blue-500 hover:text-white transition ease-in-out duration-150">
-          Login
+          <TranslateComponent text="Login" />
           <ArrowRightEndOnRectangleIcon />
         </a>
 

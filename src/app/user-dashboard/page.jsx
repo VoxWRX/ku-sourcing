@@ -10,17 +10,10 @@ import Navbar from "../components/navbar";
 import ProductRecommendations from "../components/recommendation";
 import CommentsSection from "../components/user-comments";
 import withAuth from "../context/withAuth";
-import { useGlobalContext } from "../context/globalContext";
 
 
 function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
-  const { setSelectedProduct } = useGlobalContext();
-
-  const handleProductSelect = (product) => {
-    setSelectedProduct(product);
-    window.location.href = '/user-sourcing-requests';
-  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -39,7 +32,7 @@ function Dashboard() {
       <DataCards />
 
       <StepsComponent />
-      <ProductRecommendations onProductSelect={handleProductSelect} />
+      <ProductRecommendations />
       <div className="flex flex-col my-10 mx-4 w-full lg:flex-row items-center justify-center">
         <div className="grid h-auto mx-6 place-items-center">
           <Faqs />

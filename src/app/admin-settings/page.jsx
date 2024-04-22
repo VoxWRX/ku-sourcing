@@ -10,6 +10,7 @@ import { db } from '../config/firebase';
 import UpdateUser from '../components/alerts/update-user-profile';
 import LoadingIndicator from '../components/alerts/loading-indicator';
 import AddProductForm from './add-products';
+import ServicesList from './services';
 
 const SettingsPage = () => {
     const { currentUser } = useContext(AuthContext);
@@ -54,17 +55,23 @@ const SettingsPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const userRef = doc(db, 'users', currentUser.uid);
-        await updateDoc(userRef, {
-            firstName,
-            familyName,
-            profilePicture: profilePictureUrl,
-        });
-        setUpdateSuccess(true);
-        window.location.href = '/admin-dashboard';
+        try {
+            await updateDoc(userRef, {
+                firstName,
+                familyName,
+                profilePicture: profilePictureUrl,
+            });
+            setUpdateSuccess(true);
+
+        } catch (error) {
+            console.error("Failed to update profile:", error);
+        }
     };
 
     const handleCloseAlert = () => {
         setUpdateSuccess(false);
+        window.location.href = '/admin-dashboard';
+
     };
 
     if (isLoading) {
@@ -75,7 +82,7 @@ const SettingsPage = () => {
         <>
             <Sidebar />
 
-            <div className="settings-container max-w-4xl mx-auto mb-10 p-5">
+            <div className="settings-container max-w-6xl mx-auto mb-10 p-5">
                 <h1 className="text-4xl font-bold text-center mt-5 mb-10">Admin Settings</h1>
                 {/* Tab Navigation */}
 
@@ -91,6 +98,12 @@ const SettingsPage = () => {
                         onClick={() => setActiveTab('addProducts')}
                     >
                         Add Products
+                    </button>
+                    <button
+                        className={`py-2 px-4 -mb-px font-semibold ${activeTab === 'services' ? 'text-blue-500 border-blue-500 border-b-2' : 'text-gray-500 border-transparent'}`}
+                        onClick={() => setActiveTab('services')}
+                    >
+                        Services
                     </button>
                 </div>
 
@@ -158,6 +171,12 @@ const SettingsPage = () => {
                 {activeTab === 'addProducts' && (
                     <div>
                         <AddProductForm />
+                    </div>
+                )}
+
+                {activeTab === 'services' && (
+                    <div>
+                        <ServicesList />
                     </div>
                 )}
 

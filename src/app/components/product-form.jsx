@@ -11,6 +11,7 @@ import { AuthContext } from '../context/authContext'
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import NotificationForm from './alerts/form-submit-success'
 import { useGlobalContext } from '../context/globalContext'
+import TranslateComponent from './translate-comp'
 
 
 const category = [
@@ -56,11 +57,11 @@ function classNames(...classes) {
 
 export default function SourcingRequestForm() {
   const [selectedCategory, setSelectedCategory] = useState(category[3]);
+  const [isUploading, setIsUploading] = useState(false);
   const [file, setFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
-  const { selectedProduct, setSelectedProduct } = useGlobalContext();
-
+  const { selectedProduct } = useGlobalContext();
   const [formData, setFormData] = useState({
     productName: '',
     productImage: null,
@@ -74,6 +75,7 @@ export default function SourcingRequestForm() {
   });
 
   const [destinations, setDestinations] = useState([]);
+
 
   const handleUpdateDestinations = (newDestinations) => {
     setDestinations(newDestinations);
@@ -110,6 +112,7 @@ export default function SourcingRequestForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsUploading(true);
 
     if (!currentUser) {
       alert('You must be logged in to submit a request.');
@@ -123,7 +126,6 @@ export default function SourcingRequestForm() {
     }
 
     try {
-      console.log('Destinations before submission:', destinations);
 
       // Save the form data to Firestore
       await addDoc(collection(db, 'product_request_forms'), {
@@ -140,34 +142,34 @@ export default function SourcingRequestForm() {
       setTimeout(() => {
         setShowNotification(false);
         window.location.href = '/user-handling';
-      }, 5000);
+      }, 4000);
 
     } catch (error) {
       console.error('Error submitting the sourcing request: ', error);
       alert('Failed to submit the sourcing request.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
   useEffect(() => {
     if (selectedProduct) {
-      setFormData({ ...formData, productName: selectedProduct.name, category: selectedProduct.category });
-      setImageUrl(selectedProduct.imageUrl);
-
-      const selectedCategoryObj = category.find(cat => cat.name === selectedProduct.category);
-      if (selectedCategoryObj) setSelectedCategory(selectedCategoryObj);
-    } else {
-      // If no product is selected, reset the form and imageUrl to their initial states
+      console.log('Selected product in form:', selectedProduct);
       setFormData({
-        productName: '',
-        productImage: null,
-        productURL: '',
-        category: selectedCategory.name,
+        ...formData,
+        productName: selectedProduct.name,
+        productImage: selectedProduct.imageUrl,
+        productURL: selectedProduct.productURL || '',
+        category: selectedProduct.category,
         additionalNotes: '',
         airFreight: false,
         status: 'Processing',
         formCreationDate: new Date(),
       });
-      setImageUrl(''); // Reset the image preview URL
+      setImageUrl(selectedProduct.productImageUrl || '');
+      const categoryObj = category.find(cat => cat.name === selectedProduct.category);
+      setSelectedCategory(categoryObj || category[0]);
+
     }
 
   }, [selectedProduct]);
@@ -178,13 +180,13 @@ export default function SourcingRequestForm() {
       <div className="space-y-12">
         <TypewriterEffectSourcing />
         <p className="text-sm leading-6 text-gray-600">
-          All information with * below are required.
+          <TranslateComponent text="All information with * below are required." />
         </p>
 
         <div className="mt-10 container grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8">
           <div className="sm:col-span-4">
             <label htmlFor="product" className="block text-sm font-medium leading-6 text-gray-900 after:content-['*'] after:ml-0.5 after:text-red-500">
-              Product Name
+              <TranslateComponent text="Product Name" />
             </label>
             <div className="mt-2">
               <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-inset focus-within:ring-blue-500 sm:max-w-md">
@@ -208,7 +210,7 @@ export default function SourcingRequestForm() {
 
           <div className="col-full max-w-xl">
             <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900 after:content-['*'] after:ml-0.5 after:text-red-500">
-              Product Image
+              <TranslateComponent text="Product Image" />
             </label>
             <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
 
@@ -221,10 +223,10 @@ export default function SourcingRequestForm() {
                         htmlFor="file-upload"
                         className="relative cursor-pointer rounded-md p-1 bg-white font-semibold text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-400 focus-within:ring-offset-2 hover:text-blue-500"
                       >
-                        <span>Upload a file</span>
+                        <span><TranslateComponent text="Upload a file" /></span>
                         <input onChange={handleFileChange} required id="file-upload" name="productImage" type="file" className="sr-only" />
                       </label>
-                      <p className="pl-1">or drag and drop</p>
+                      <p className="pl-1"><TranslateComponent text="or drag and drop" /></p>
                     </div>
                     <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 5MB</p>
                   </div>
@@ -240,7 +242,7 @@ export default function SourcingRequestForm() {
 
           <div className="sm:col-span-4 max-w-xl">
             <label htmlFor="urlField" className="block text-sm font-medium leading-6 text-gray-900">
-              Product URL
+              <TranslateComponent text=" Product URL" />
             </label>
             <div className="mt-2">
               <input
@@ -261,7 +263,7 @@ export default function SourcingRequestForm() {
 
               {({ open }) => (
                 <>
-                  <Listbox.Label className="block mt-5 text-sm font-medium leading-6 text-gray-900 after:content-['*'] after:ml-0.5 after:text-red-500">Category</Listbox.Label>
+                  <Listbox.Label className="block mt-5 text-sm font-medium leading-6 text-gray-900 after:content-['*'] after:ml-0.5 after:text-red-500"><TranslateComponent text="Category" /></Listbox.Label>
                   <div className="relative">
                     <Listbox.Button className="relative w-full mt-2 cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm sm:leading-6">
                       <span className="flex items-center">
@@ -332,8 +334,8 @@ export default function SourcingRequestForm() {
 
 
         <div className="border-b border-gray-900/10 pb-12 ">
-          <h2 className="text-base font-semibold leading-7 text-gray-900 after:content-['*'] after:ml-0.5 after:text-red-500">Destination Country</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">You can use more than one destination for the same product.</p>
+          <h2 className="text-base font-semibold leading-7 text-gray-900 after:content-['*'] after:ml-0.5 after:text-red-500"><TranslateComponent text="Destination Country" /></h2>
+          <p className="mt-1 text-sm leading-6 text-gray-600"><TranslateComponent text="You can use more than one destination for the same product." /></p>
 
           <Destinations onUpdateDestinations={handleUpdateDestinations} />
 
@@ -341,7 +343,7 @@ export default function SourcingRequestForm() {
 
         <div className="col-span-full">
           <label htmlFor="additionalNotes" className="block text-sm font-medium leading-6 text-gray-900">
-            Additional Notes
+            <TranslateComponent text="Additional Notes" />
           </label>
           <div className="mt-2">
             <textarea
@@ -353,11 +355,11 @@ export default function SourcingRequestForm() {
               onChange={handleInputChange}
             />
           </div>
-          <p className="mt-3 text-sm leading-6 text-gray-600">Extra details for specific orders.</p>
+          <p className="mt-3 text-sm leading-6 text-gray-600"><TranslateComponent text="Extra details for specific orders." /></p>
         </div>
 
         <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base mt-4 font-semibold leading-7 text-gray-900">Shipping Methods</h2>
+          <h2 className="text-base mt-4 font-semibold leading-7 text-gray-900"><TranslateComponent text="Shipping Methods" /></h2>
 
           <div className="mt-10 space-y-10">
             <fieldset>
@@ -376,9 +378,9 @@ export default function SourcingRequestForm() {
                   </div>
                   <div className="text-sm leading-6">
                     <label htmlFor="air" className="font-medium text-gray-900">
-                      Air freight
+                      <TranslateComponent text="Air freight" />
                     </label>
-                    <p className="text-gray-500">Estimated delivery time 15-20 working days.</p>
+                    <p className="text-gray-500"><TranslateComponent text="Estimated delivery time 15-20 working days." /></p>
                   </div>
                 </div>
 
@@ -392,15 +394,16 @@ export default function SourcingRequestForm() {
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <a href='/user-dashboard'>
           <button type="button" className="text-sm font-semibold leading-6 text-gray-900 rounded-md ">
-            Cancel
+            <TranslateComponent text="Cancel" />
           </button>
         </a>
 
         <button
           type="submit"
-          className="rounded-md bg-blue-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+          className={`rounded-md bg-blue-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-500'}`}
+          disabled={isUploading}
         >
-          Request the product
+          <TranslateComponent text="Request the product" />
         </button>
       </div>
       {showNotification && <NotificationForm />}

@@ -1,51 +1,20 @@
-"use client"
-import { useContext } from "react";
-import { AuthContext } from "./context/authContext";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import SignUp from "./sign-up/page";
-import SourcingOrders from "./user-sourcing-orders/sourcing-orders";
-import Home from "./user-dashboard/page";
+import './globals.css';
+import Head from 'next/head';
+import RootLayout from './layout';
 
-  
-function App() {
-  const {currentUser} = useContext(AuthContext)
-
-  const RequireAuth = ({ children }) => {
-    return currentUser ? children : <Navigate to='/sign-up' />;
-  };
-
-
+function MyApp({ Component, pageProps }) {
   return (
-    <main className="min-h-screen flex-col items-center justify-between ">
-      <BrowserRouter>
-       <Routes>
-       <Route path="/">
-            <Route path="sign-up" element={<SignUp />} />
-            <Route
-              index
-              element={
-                <RequireAuth>
-                  <Home />
-                </RequireAuth>
-              }
-            />
-
-        <Route path="user-sourcing-orders">
-              <Route
-                index
-                element={
-                  <RequireAuth>
-                    <SourcingOrders />
-                  </RequireAuth>
-                }
-              />
-        </Route>
-
-        </Route>    
-       </Routes>
-      </BrowserRouter>
-    </main>
+    <>
+      <Head>
+        <title>Kuai Sourcing</title>
+        <meta name="description" content="Sourcing to africa based in china" />
+        <link rel="icon" href="/favicon.ico"  />
+      </Head>
+      <RootLayout>
+        <Component {...pageProps} />
+      </RootLayout>
+    </>
   );
 }
 
-export default App;
+export default MyApp;

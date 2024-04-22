@@ -8,6 +8,7 @@ import DashboardCard from './user-dashboard-card';
 import { MdError } from "react-icons/md";
 import { FaThumbsUp } from "react-icons/fa";
 import { FaClipboardList } from "react-icons/fa";
+import TranslateComponent from './translate-comp';
 
 
 const DataCards = () => {
@@ -67,7 +68,7 @@ const DataCards = () => {
 
     return (
         <>
-            <h2 className='mt-8 ml-10 text-2xl font-bold tracking-tight text-gray-700 sm:text-3xl'>Recent Orders</h2>
+            <h2 className='mt-8 ml-10 text-2xl font-bold tracking-tight text-gray-700 sm:text-3xl'><TranslateComponent text="Recent Orders" /></h2>
             <div className="flex justify-center items-center p-4">
                 <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

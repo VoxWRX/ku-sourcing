@@ -43,7 +43,7 @@ export default function QuotationSuccess({ open, setOpen }) {
                                                 Quotation filled successfully
                                             </Dialog.Title>
                                             <Dialog.Description as="h4" className="text-base my-3 leading-4 text-gray-600">
-                                                Don't forget to change status to Unpaid.
+                                                Current status of the order is unpaid.
                                             </Dialog.Description>
 
                                         </div>

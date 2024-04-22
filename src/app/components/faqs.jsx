@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+import TranslateComponent from './translate-comp';
 
 const faqs = [
     {
@@ -27,10 +29,10 @@ const FaqItem = ({ faq, isActive, toggle }) => {
     return (
         <div className="p-4 mb-2 bg-white shadow-lg rounded-md">
             <h3 className="text-lg font-semibold cursor-pointer" onClick={toggle}>
-                {faq.question}
+                <TranslateComponent text={faq.question} />
             </h3>
             <div className={`mt-2 text-gray-600 transition-height duration-500 ease-in-out overflow-hidden ${isActive ? 'max-h-96' : 'max-h-0'}`}>
-                {faq.answer}
+                <TranslateComponent text={faq.answer} />
             </div>
         </div>
     );
@@ -46,7 +48,8 @@ const Faqs = () => {
     return (
         <div className="max-w-4xl mx-auto my-10 px-4">
             <div className="text-center mb-8">
-                <h2 className="text-3xl text-gray-600 font-bold">Frequently Asked Questions</h2>
+                <h2 className="text-3xl text-gray-600 font-bold">
+                    <TranslateComponent text="Frequently Asked Questions" /></h2>
             </div>
             <div className="space-y-4">
                 {faqs.map((faq, index) => (

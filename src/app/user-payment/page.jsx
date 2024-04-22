@@ -15,6 +15,7 @@ import { db, storage } from '../config/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import ProofPayment from '../components/alerts/proof-payment-success';
+import TranslateComponent from '../components/translate-comp';
 
 
 function Payments() {
@@ -39,7 +40,7 @@ function Payments() {
       'Account Number: 230330299677121101450088',
       'Swift Code: CIHMMAMC'
     ],
-    'JPMorgan Chase': [
+    'International Bank Transfer': [
       'Bank Name: JPMorgan Chase Bank N.A. Hong Kong Branch',
       'Country: HONG KONG, CHINA',
       'Bank Address: CHATER HOUSE, 8 CONNAUGHT ROAD, CENTRAL, HONG KONG',
@@ -93,7 +94,7 @@ function Payments() {
           // Return the summed total cost as a string formatted to two decimal places
           return { orderId, totalCost: totalCost.toFixed(2) };
         } else {
-          console.log(`No quotation found for order ID: ${orderId}`); // Log for debugging
+          console.log(`No quotation found for order ID: ${orderId}`); // simple log for debugging
           return { orderId, totalCost: "No quotation found" };
         }
       }));
@@ -144,8 +145,7 @@ function Payments() {
 
       // Iterate over selected orders and save proof of payment for each
       const updates = Object.entries(selectedOrders).filter(([_, isSelected]) => isSelected).map(async ([orderId]) => {
-        // Save the file URL, user ID, and orderId to Firestore in a general collection
-        const proofDocRef = doc(db, "proofOfPayment", currentUser.uid, "orders", orderId); // Use a subcollection for orders
+        const proofDocRef = doc(db, "proofOfPayment", currentUser.uid, "orders", orderId);
         await setDoc(proofDocRef, {
           url: fileUrl,
           userId: currentUser.uid,
@@ -169,7 +169,6 @@ function Payments() {
   };
   const closeProofModal = () => {
     setIsProofModalOpen(false);
-    // Reset other relevant states here
     setSelectedOrders({});
     setFile(null);
   };
@@ -184,9 +183,11 @@ function Payments() {
       <Navbar />
       <div className="max-w-4xl mx-auto py-8 px-6 my-8 bg-white shadow-lg rounded-lg">
         <div className="px-4 sm:px-0">
-          <h3 className="text-2xl font-semibold leading-7 text-gray-900">Payment Information</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">You can make a payment using one of the account options listed below.<br />
-            Then submit a confirmation of your payment.</p>
+          <h3 className="text-2xl font-semibold leading-7 text-gray-900">
+            <TranslateComponent text="Payment Information" /></h3>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">
+            <TranslateComponent text="You can make a payment using one of the account options listed below." /><br />
+            <TranslateComponent text="Then submit a confirmation of your payment." /></p>
         </div>
         <div className="mt-6 border-t border-gray-100">
           <dl className="divide-y divide-gray-100">
@@ -197,7 +198,7 @@ function Payments() {
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                   <button onClick={() => openModal(bank)} className='flex items-center justify-center rounded-lg border border-transparent bg-blue-400 px-4 py-2 text-base text-white shadow-sm hover:bg-blue-500'>
-                    Account details
+                    <TranslateComponent text="Account details" />
                   </button>
                 </dd>
               </div>
@@ -230,7 +231,7 @@ function Payments() {
                 >
                   <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                      {selectedBank.name} Account Details
+                      {selectedBank.name} <TranslateComponent text="Account Details" />
                     </Dialog.Title>
                     <div className="mt-3">
                       {selectedBank.details.map((line, index) => (
@@ -243,7 +244,7 @@ function Payments() {
                         className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                         onClick={closeModal}
                       >
-                        Close
+                        <TranslateComponent text="Close" />
                       </button>
                     </div>
                   </Dialog.Panel>
@@ -254,7 +255,7 @@ function Payments() {
         </Transition>
 
         <div className="max-w-4xl mx-auto py-8 px-6 ">
-          <h1 className="text-xl font-semibold text-gray-700 mb-4">Unpaid Orders</h1>
+          <h1 className="text-xl font-semibold text-gray-700 mb-4"><TranslateComponent text="Unpaid Orders" /></h1>
           {unpaidOrders.length > 0 ? (
             <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
               <ul className="divide-y divide-gray-200">
@@ -267,22 +268,22 @@ function Payments() {
                         onChange={() => handleCheckboxChange(order.orderId)}
                         className="mr-4 rounded"
                       />
-                      <span className="font-medium text-gray-900">Order ID: {order.orderId}</span>
+                      <span className="font-medium text-gray-900"><TranslateComponent text="Order ID: " />{order.orderId}</span>
                     </div>
-                    <span className="text-blue-600 font-semibold">Total Cost: ${order.totalCost}</span>
+                    <span className="text-blue-600 font-semibold"><TranslateComponent text="Total Cost: " />${order.totalCost}</span>
                   </li>
                 ))}
               </ul>
             </div>
           ) : (
             <div className="text-center py-6">
-              <span className="text-gray-500 font-medium">No unpaid orders found.</span>
+              <span className="text-gray-500 font-medium"><TranslateComponent text="No unpaid orders found." /></span>
             </div>
           )}
         </div>
 
         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-lg font-semibold leading-6 mt-5 ml-2 text-gray-900">Proof of Payment</dt>
+          <dt className="text-lg font-semibold leading-6 mt-5 ml-2 text-gray-900"><TranslateComponent text="Proof of Payment" /></dt>
           <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
             <div className="bg-white rounded-md border border-gray-200 shadow-sm">
               <div className="px-4 py-5 sm:p-6 flex justify-between items-center">
@@ -300,7 +301,7 @@ function Payments() {
                   onClick={uploadFile}
                   disabled={!anyOrderSelected || !file || uploading}
                 >
-                  Upload
+                  <TranslateComponent text="Upload" />
                 </button>
               </div>
             </div>

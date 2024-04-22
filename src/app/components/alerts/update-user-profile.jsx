@@ -3,12 +3,12 @@ import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { HandThumbUpIcon } from '@heroicons/react/24/outline'
 
-export default function UpdateUser({ open, setOpen }) {
+export default function UpdateUser({ open, handleClose }) {
 
 
     return (
         <Transition.Root show={open} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={setOpen}>
+            <Dialog as="div" className="relative z-10" onClose={handleClose}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -50,7 +50,7 @@ export default function UpdateUser({ open, setOpen }) {
                                     <button
                                         type="button"
                                         className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-400 sm:ml-3 sm:w-auto"
-                                        onClick={() => setOpen(false)}
+                                        onClick={handleClose}
                                     >
                                         Go back
                                     </button>

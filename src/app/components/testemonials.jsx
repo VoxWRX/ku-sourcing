@@ -1,3 +1,5 @@
+import TranslateComponent from "./translate-comp";
+
 export default function Testemonials() {
   return (
     <section className="relative isolate overflow-hidden px-6 py-24 sm:py-32 lg:px-8">
@@ -8,10 +10,10 @@ export default function Testemonials() {
         <figure className="mt-10">
           <blockquote className="text-center text-xl font-semibold leading-8 text-gray-900 sm:text-2xl sm:leading-9">
             <p>
-              “Using kuai sourcing has transformed the way we source products globally.
+              <TranslateComponent text="“Using kuai sourcing has transformed the way we source products globally.
               The intuitive interface provided by the team have enabled us
               to secure the best deals, streamline our operations, and significantly reduce overhead costs.
-              Highly recommended for businesses looking to gain a competitive edge in procurement.”
+              Highly recommended for businesses looking to gain a competitive edge in procurement.”"/>
             </p>
           </blockquote>
           <figcaption className="mt-10">

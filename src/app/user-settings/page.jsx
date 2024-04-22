@@ -8,6 +8,7 @@ import { db } from '../config/firebase';
 import withAuth from '../context/withAuth';
 import UpdateUser from '../components/alerts/update-user-profile';
 import LoadingIndicator from '../components/alerts/loading-indicator';
+import TranslateComponent from '../components/translate-comp';
 
 const SettingsPage = () => {
     const { currentUser } = useContext(AuthContext);
@@ -72,12 +73,13 @@ const SettingsPage = () => {
 
     return (
         <div className="max-w-4xl mx-auto mb-10 p-5">
-            <h1 className="text-3xl font-semibold text-center mt-5 mb-10">Settings</h1>
-            <p className="mt-4 mb-8 text-lg text-center leading-8 text-gray-600">Please be sure to enter your full legal name, exactly as it appears on your identification documents</p>
+            <h1 className="text-3xl font-semibold text-center mt-5 mb-10"><TranslateComponent text="Settings" /></h1>
+            <p className="mt-4 mb-8 text-lg text-center leading-8 text-gray-600">
+                <TranslateComponent text="Please be sure to enter your full legal name, exactly as it appears on your identification documents" /></p>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                     <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                        First Name
+                        <TranslateComponent text="First Name" />
                     </label>
                     <input
                         type="text"
@@ -92,7 +94,7 @@ const SettingsPage = () => {
 
                 <div className="space-y-2">
                     <label htmlFor="familyName" className="block text-sm font-medium text-gray-700">
-                        Family Name
+                        <TranslateComponent text="Family Name" />
                     </label>
                     <input
                         type="text"
@@ -107,7 +109,7 @@ const SettingsPage = () => {
 
                 <div className="space-y-2">
                     <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
-                        Phone Number
+                        <TranslateComponent text="Phone Number" />
                     </label>
                     <input
                         type="text"
@@ -122,7 +124,7 @@ const SettingsPage = () => {
 
                 <div className="space-y-2">
                     <label htmlFor="profilePicture" className="block text-sm font-medium text-gray-700">
-                        Profile Picture
+                        <TranslateComponent text="Profile Picture" />
                     </label>
                     <input
                         type="file"
@@ -141,7 +143,7 @@ const SettingsPage = () => {
                         type="submit"
                         className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                        Update Profile
+                        <TranslateComponent text="Update Profile" />
                     </button>
                 </div>
             </form>

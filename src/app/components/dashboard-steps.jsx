@@ -1,4 +1,5 @@
 import React from 'react';
+import TranslateComponent from './translate-comp';
 
 const steps = [
     { number: 1, title: "Select Your Product", description: "Fill the form about the product you wish to source.", href: '/user-sourcing-requests' },
@@ -16,7 +17,7 @@ const Step = ({ step, isLast }) => {
                         {step.number}
                     </a>
                     <span className="absolute w-auto p-2 -mt-24 sm:-mt-16 bg-white text-sm text-gray-700 rounded-md shadow-lg min-w-max invisible group-hover:visible transition-opacity duration-300 ease-in-out">
-                        {step.description}
+                        <TranslateComponent text={step.description} />
                     </span>
                 </div>
                 {!isLast && (
@@ -24,7 +25,9 @@ const Step = ({ step, isLast }) => {
                 )}
             </div>
             <div className="mt-2 sm:mt-0 sm:ml-4 min-w-0">
-                <p className="text-sm font-semibold uppercase tracking-wider text-center sm:text-left">{step.title}</p>
+                <p className="text-sm font-semibold uppercase tracking-wider text-center sm:text-left">
+                    <TranslateComponent text={step.title} />
+                </p>
             </div>
         </div>
     );
@@ -34,7 +37,8 @@ const StepsComponent = () => {
     return (
         <div className="py-8">
             <div className="max-w-5xl mx-auto px-4">
-                <h2 className="text-3xl text-gray-700 font-bold text-center sm:text-center mt-6 mb-6">4 Easy Steps</h2>
+                <h2 className="text-3xl text-gray-700 font-bold text-center sm:text-center mt-6 mb-6">
+                    <TranslateComponent text="4 Easy Steps" /></h2>
                 <div className="flex flex-col sm:flex-row justify-start sm:justify-between space-y-4 sm:space-y-0">
                     {steps.map((step, index) => (
                         <Step key={step.number} step={step} isLast={index === steps.length - 1} />

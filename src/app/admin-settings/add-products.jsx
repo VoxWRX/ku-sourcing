@@ -98,7 +98,7 @@ const AddProductForm = () => {
     return (
         <div className="max-w-4xl mx-auto my-6">
             <form onSubmit={handleSubmit} className="p-6 shadow-xl rounded-lg bg-white space-y-6">
-                <h2 className="text-2xl font-bold text-gray-800">Suggest products for users</h2>
+                <h2 className="text-2xl font-semibold text-gray-800">Suggest products for users</h2>
 
                 <div>
                     <label htmlFor="productName" className="block text-lg font-medium text-gray-700">Product Name</label>

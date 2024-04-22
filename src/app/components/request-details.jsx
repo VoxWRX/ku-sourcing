@@ -6,6 +6,7 @@ import { collection, query, where, getDocs, getDoc, doc } from 'firebase/firesto
 import React, { useState, useEffect, Fragment, useContext } from 'react';
 import { db } from '../config/firebase';
 import { AuthContext } from '../context/authContext';
+import TranslateComponent from './translate-comp';
 
 
 const Details = ({ status, orderId }) => {
@@ -56,7 +57,7 @@ const Details = ({ status, orderId }) => {
         setQuotationDetails(quotes);
       }
     } else {
-      console.log("No such document in product_request_forms!");
+      console.log("No such document!");
     }
   };
 
@@ -104,11 +105,11 @@ const Details = ({ status, orderId }) => {
           }
         }}
       >
-        Get Quotation
+        <TranslateComponent text="Get Quotation" />
       </a>
 
       <Transition.Root show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setOpen}>
+        <Dialog as="div" className="relative z-40" onClose={setOpen}>
           <Transition.Child
             as={Fragment}
             enter="ease-in-out duration-500"
@@ -137,7 +138,7 @@ const Details = ({ status, orderId }) => {
                     <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                       <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                         <div className="flex items-start justify-between">
-                          <Dialog.Title className="text-lg mb-2 font-semibold text-gray-900">Quotation Details</Dialog.Title>
+                          <Dialog.Title className="text-lg mb-2 font-semibold text-gray-900"> <TranslateComponent text="Quotation Details" /></Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
@@ -155,21 +156,21 @@ const Details = ({ status, orderId }) => {
                             <div className="space-y-6">
                               {quotationDetails.map((quotation, index) => (
                                 <div key={index} className="p-4 bg-gray-50 rounded-lg">
-                                  <h3 className="text-lg font-semibold text-gray-900">{`Quotation for ${quotation.destination}`}</h3>
-                                  <p className="text-sm font-bold text-gray-700">Unit Price: $ <span className="font-normal">{quotation.unitPrice}</span></p>
-                                  <p className="text-sm font-bold text-gray-700">Commission of Service: $ <span className="font-normal">{quotation.commissionOfService}</span></p>
-                                  <p className="text-sm font-bold text-gray-700">Unit Weight: kg <span className="font-normal">{quotation.unitWeight}</span></p>
-                                  <p className="text-sm font-bold text-gray-700">Delivery Cost in China: $ <span className="font-normal">{quotation.deliveryCostInChina}</span></p>
-                                  <p className="text-sm font-bold text-gray-700">Total Cost: $ <span className="font-normal">{quotation.totalCost}</span></p>
+                                  <h3 className="text-lg font-semibold text-gray-900"> <TranslateComponent text={`Quotation for ${quotation.destination}`} /></h3>
+                                  <p className="text-sm font-bold text-gray-700"> <TranslateComponent text="Unit Price: $ " /><span className="font-normal">{quotation.unitPrice}</span></p>
+                                  <p className="text-sm font-bold text-gray-700"> <TranslateComponent text="Commission of Service: $ " /><span className="font-normal">{quotation.commissionOfService}</span></p>
+                                  <p className="text-sm font-bold text-gray-700"> <TranslateComponent text="Unit Weight: kg " /><span className="font-normal">{quotation.unitWeight}</span></p>
+                                  <p className="text-sm font-bold text-gray-700"> <TranslateComponent text="Delivery Cost in China: $ " /><span className="font-normal">{quotation.deliveryCostInChina}</span></p>
+                                  <p className="text-sm font-bold text-gray-700"> <TranslateComponent text="Total Cost: $ " /><span className="font-normal">{quotation.totalCost}</span></p>
                                 </div>
                               ))}
                             </div>
                           )
                         ) : (
-                          <p className="text-sm font-bold mt-4 text-gray-600">No quotation details available yet.</p>
+                          <p className="text-sm font-bold mt-4 text-gray-600"> <TranslateComponent text="No quotation details available yet." /></p>
                         )}
 
-                        <h2 className='text-lg text-gray-900 px-4 py-2 font-semibold'>Real Images</h2>
+                        <h2 className='text-lg text-gray-900 px-4 py-2 font-semibold'> <TranslateComponent text="Real Images" /></h2>
                         <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 xl:gap-x-4">
                           {realImages.length > 0 ? (
                             realImages.map((imageSrc, index) => (
@@ -180,15 +181,15 @@ const Details = ({ status, orderId }) => {
                               </div>
                             ))
                           ) : (
-                            <p className="text-gray-500 ml-4">No real images available.</p>
+                            <p className="text-gray-500 ml-4"> <TranslateComponent text="No real images available." /></p>
                           )}
                         </div>
                         <div className="mt-4 border-t border-gray-200 px-4 py-6 sm:px-6">
                           <div className="flex justify-between text-base font-medium text-gray-900">
-                            <p>Note</p>
+                            <p> <TranslateComponent text="Note" /></p>
                           </div>
                           <p className="mt-0.5 text-sm text-gray-500">
-                            Taxes are not included <a href='/https://wa.me/+447466068298?text=Hello%20What%20about%20taxes!' className='text-blue-400 hover:text-blue-500'>contact us</a> to learn more.
+                            <TranslateComponent text="Taxes are not included" /> <a href='/https://wa.me/+8619301266421?text=Hello%20What%20about%20taxes!' className='text-blue-400 hover:text-blue-500'> <TranslateComponent text="contact us" /></a>  <TranslateComponent text="to learn more." />
                           </p>
                           <div className="mt-6">
                             <button
@@ -196,7 +197,7 @@ const Details = ({ status, orderId }) => {
                               onClick={handlePaymentClick}
                               disabled={isLoading}
                             >
-                              {isLoading ? 'Loading...' : 'Proceed to payment'}
+                              <TranslateComponent text={isLoading ? 'Loading...' : 'Proceed to payment'} />
                             </button>
                           </div>
                         </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 
 const QuotationFormModal = ({ order, destinationIndex, quantity, service, onClose, onSave }) => {
@@ -41,9 +41,17 @@ const QuotationFormModal = ({ order, destinationIndex, quantity, service, onClos
             quotationCreationDate: new Date(),
         });
 
+        // Update the order status to "Unpaid"
+        const orderDocRef = doc(db, "product_request_forms", order.id);
+        await updateDoc(orderDocRef, {
+            status: "Unpaid"
+        });
+
+
         // Marking the quotation as filled for the corresponding destination
         const updatedOrder = {
             ...order,
+            status: "Unpaid",
             destinations: order.destinations.map((dest, idx) => {
                 if (idx === destinationIndex) {
                     return { ...dest, quotationFilled: true };
@@ -65,7 +73,7 @@ const QuotationFormModal = ({ order, destinationIndex, quantity, service, onClos
                 <h2 className="text-xl font-medium"><b>Quotation for </b> {order.productName}</h2>
                 <p className='text-sm text-gray-600'><b>with a quantity of :</b> {quantity}</p>
                 <p className='text-sm text-gray-600'><b>and the selected service is : </b> {service}</p>
-                <p className="text-sm text-red-500">Once submitted you can't modify this quotation!</p>
+                <p className="text-sm text-red-500">Once submitted you can&apos;t modify this quotation!</p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {Object.keys(quotationData).map((key) => (

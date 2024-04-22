@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { FaCheckCircle, FaRegCircle } from 'react-icons/fa'; // You may choose other icons
+import TranslateComponent from './translate-comp';
 
 const steps = ['Select Product', 'Confirmation', 'Complete Purchase', 'Get Products'];
 
@@ -63,7 +64,7 @@ const Step = ({ title, index, active, onEnter, onLeave }) => {
                 )}
             </motion.div>
             <span className={`text-xs mt-2 font-semibold ${active ? 'text-blue-500' : 'text-gray-500'}`}>
-                {title}
+                <TranslateComponent text={title} />
             </span>
             <span className="absolute top-0 -mt-8 text-sm font-bold text-gray-700">{index + 1}</span>
         </div>

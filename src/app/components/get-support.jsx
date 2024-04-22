@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import emailjs from 'emailjs-com';
+import NotificationMessage from './alerts/message-submit-success';
 
 
 const ContactForm = () => {
@@ -10,6 +11,7 @@ const ContactForm = () => {
     const [email, setEmail] = useState('');
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
+    const [showNotification, setShowNotification] = useState(false);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -26,7 +28,13 @@ const ContactForm = () => {
 
         emailjs.send(serviceId, templateId, templateParams, userId)
             .then((result) => {
-                alert('Message Sent, We will get back to you shortly', result.text);
+                console.log(result);
+                setShowNotification(true);
+                setTimeout(() => {
+                    setShowNotification(false);
+                    window.location.href = '/user-handling';
+                }, 4000);
+
             }, (error) => {
                 alert('An error occurred, Please try again', error.text);
             });
@@ -41,7 +49,7 @@ const ContactForm = () => {
 
     return (
         <div className="bg-white shadow-lg rounded-lg p-8 max-w-6xl mx-auto mb-10">
-            <h2 className="text-2xl font-bold text-gray-700 text-center mb-4">LET'S GET IN TOUCH</h2>
+            <h2 className="text-2xl font-bold text-gray-700 text-center mb-4">LET&apos;S GET IN TOUCH</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex flex-wrap -mx-2 space-y-4 md:space-y-0">
                     <div className="w-full px-2 md:w-1/3">
@@ -101,6 +109,7 @@ const ContactForm = () => {
                     </button>
                 </div>
             </form>
+            {showNotification && <NotificationMessage />}
         </div>
     );
 };

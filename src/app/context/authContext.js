@@ -42,7 +42,6 @@ export const AuthContextProvider = ({ children }) => {
               uid: user.uid, 
               ...userDoc.data(),
             };
-            console.log("Fetched User Info:", userInfo); // Log the fetched user info
             dispatch({
               type: 'SET_USER_INFO',
               payload: userInfo,

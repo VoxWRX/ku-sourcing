@@ -93,12 +93,12 @@ const SignUp = () => {
         dispatch({ type: "SIGNUP", payload: user });
 
         console.log("User signed up and phone verified with email linked");
-        window.location.href = '/user-dashboard'; // Navigate to user dashboard
+        window.location.href = '/user-dashboard';
       }
 
     } catch (error) {
       console.error("Error during sign up or phone verification:", error);
-      setError(error.message);
+      setError(error.message.replace('Firebase:', ''));
       setIsVerifyingOTP(false);
     }
   };
@@ -135,8 +135,8 @@ const SignUp = () => {
       console.log('Redirecting to user dashboard');
       window.location.href = '/user-dashboard';
     } catch (error) {
-      console.error('Error signing in with Google or creating the user document:', error);
-      setError(error.message);
+      console.error('Error signing in with Google or creating the user:', error);
+      setError(error.message.replace('Firebase:', ''));
     }
   };
 
@@ -147,8 +147,8 @@ const SignUp = () => {
       <div className="flex min-h-full bg-gray-50 flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
-            className="mx-auto h-10 w-auto"
-            src="/kuai-logo.svg"
+            className="mx-auto h-20 w-auto"
+            src="/kuai-sourcing-login.svg"
             alt="Kuai Sourcing"
           />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">

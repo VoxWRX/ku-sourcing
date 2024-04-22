@@ -2,7 +2,7 @@ import { useContext, useEffect } from 'react';
 import { AuthContext } from './authContext';
 
 const withAuth = (WrappedComponent, adminOnly = false) => {
-  return (props) => {
+  const WithAuth = (props) => {
     const { currentUser, isUserInfoFetched } = useContext(AuthContext);
 
     useEffect(() => {
@@ -26,6 +26,9 @@ const withAuth = (WrappedComponent, adminOnly = false) => {
     // If currentUser is not null render the wrapped component
     return currentUser ? <WrappedComponent {...props} /> : null;
   };
+  WithAuth.displayName = `WithAuth(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+
+  return WithAuth;
 };
 
 
