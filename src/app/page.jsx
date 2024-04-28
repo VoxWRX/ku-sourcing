@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Subtitle from "./components/subtitle";
 import Footer from "./components/footer";
 import ContactForm from "./components/get-support";
@@ -11,6 +11,7 @@ import Testemonials from "./components/testemonials";
 import { useEffect, useState } from "react";
 import LoadingIndicator from "./components/alerts/loading-indicator";
 import TranslateComponent from "./components/translate-comp";
+import ThemeSwitch from "./components/themeSwitch";
 
 function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +22,9 @@ function Home() {
 
   // Check if all animations are complete
   useEffect(() => {
-    const allAnimationsComplete = Object.values(animationComplete).every(status => status);
+    const allAnimationsComplete = Object.values(animationComplete).every(
+      (status) => status
+    );
     if (allAnimationsComplete) {
       setIsLoading(false);
     }
@@ -29,7 +32,7 @@ function Home() {
 
   // Callback to handle animation completion
   const handleAnimationComplete = (component) => {
-    setAnimationComplete(prev => ({ ...prev, [component]: true }));
+    setAnimationComplete((prev) => ({ ...prev, [component]: true }));
   };
 
   useEffect(() => {
@@ -43,20 +46,31 @@ function Home() {
   }, []);
 
   if (isLoading) {
-    return <LoadingIndicator />
+    return <LoadingIndicator />;
   }
   return (
     <main className="min-h-screen flex flex-col items-center justify-between">
       <div className="relative w-full">
-        <a href="/login"
-          className="absolute right-4 top-4 px-4 py-2  text-blue-500 font-semibold rounded-xl hover:bg-blue-500 hover:text-white transition ease-in-out duration-150">
+        <div class="relative h-32 w-32 ">
+          <div class="absolute left-0 top-0 h-32 w-32">
+            <ThemeSwitch />
+          </div>
+        </div>
+        <a
+          href="/login"
+          className="absolute right-4 top-4 px-4 py-2  text-blue-500 font-semibold rounded-xl hover:bg-blue-500 hover:text-white transition ease-in-out duration-150"
+        >
           <TranslateComponent text="Login" />
           <ArrowRightEndOnRectangleIcon />
         </a>
 
         <div className="text-sm pt-8">
-          <SparklesBlack onComplete={() => handleAnimationComplete('sparklesBlack')} />
-          <GlobeWorld onComplete={() => handleAnimationComplete('globeWorld')} />
+          <SparklesBlack
+            onComplete={() => handleAnimationComplete("sparklesBlack")}
+          />
+          <GlobeWorld
+            onComplete={() => handleAnimationComplete("globeWorld")}
+          />
           <Subtitle />
           <div className="mb-8 mt-4">
             <Steps />
