@@ -2,6 +2,7 @@ import './globals.css';
 import Head from 'next/head';
 import RootLayout from './layout';
 
+
 function MyApp({ Component, pageProps }) {
   return (
     <>
@@ -10,9 +11,11 @@ function MyApp({ Component, pageProps }) {
         <meta name="description" content="Sourcing to africa based in china" />
         <link rel="icon" href="/favicon.ico"  />
       </Head>
-      <RootLayout>
-        <Component {...pageProps} />
-      </RootLayout>
+     
+        <RootLayout>
+          <Component {...pageProps} />
+        </RootLayout>
+      
     </>
   );
 }

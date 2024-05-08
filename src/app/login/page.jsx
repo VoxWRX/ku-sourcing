@@ -11,7 +11,6 @@ import { auth, db, googleProvider } from "../config/firebase";
 import { AuthContext } from "../context/authContext";
 import { getDoc, setDoc, doc } from "firebase/firestore";
 import { FaGoogle } from "react-icons/fa";
-import ThemeSwitch from "../components/themeSwitch";
 
 const Login = () => {
   const [error, setError] = useState("");
@@ -102,7 +101,6 @@ const Login = () => {
           />
           <div class="relative h-32 w-32 ">
             <div class="absolute left-0 top-0 h-32 w-32">
-              <ThemeSwitch />
             </div>
           </div>
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">

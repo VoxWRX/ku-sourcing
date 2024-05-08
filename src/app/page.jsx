@@ -11,9 +11,20 @@ import Testemonials from "./components/testemonials";
 import { useEffect, useState } from "react";
 import LoadingIndicator from "./components/alerts/loading-indicator";
 import TranslateComponent from "./components/translate-comp";
-import ThemeSwitch from "./components/themeSwitch";
+import { useTheme } from "next-themes";
+import ThemeToggle from "./components/themeToggle";
+
 
 function Home() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+  const currentTheme = theme === 'system' ? systemTheme : theme;
   const [isLoading, setIsLoading] = useState(true);
   const [animationComplete, setAnimationComplete] = useState({
     sparklesBlack: false,
@@ -53,7 +64,6 @@ function Home() {
       <div className="relative w-full">
         <div class="relative h-32 w-32 ">
           <div class="absolute left-0 top-0 h-32 w-32">
-            <ThemeSwitch />
           </div>
         </div>
         <a
@@ -63,6 +73,7 @@ function Home() {
           <TranslateComponent text="Login" />
           <ArrowRightEndOnRectangleIcon />
         </a>
+        <ThemeToggle />
 
         <div className="text-sm pt-8">
           <SparklesBlack

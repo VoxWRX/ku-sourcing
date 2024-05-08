@@ -5,6 +5,8 @@ import { AuthContextProvider } from "./context/authContext";
 import { GlobalProvider } from "./context/globalContext";
 import { LanguageProvider } from "./context/languageContext";
 import { Providers } from "./providers";
+import { ThemeProvider } from 'next-themes';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +19,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html>
+      <ThemeProvider enableSystem={true} attribute='class'>
       <Providers>
         <AuthContextProvider>
           <GlobalProvider>
@@ -26,6 +29,7 @@ export default function RootLayout({ children }) {
           </GlobalProvider>
         </AuthContextProvider>
       </Providers>
+      </ThemeProvider>
     </html>
   );
 }
